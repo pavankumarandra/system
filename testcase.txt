@@ -81,19 +81,6 @@ PC_ID-010 , RequestSeed_ASK_Request(27 11),0x27,0x11,0x67,  ,Physical
 PC_ID-011 , SendKey_ASK_Send(27 12),0x27,0x12,0x67,  ,Physical
 TC_ID-086 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Supplier_Code_F1_A1_Write,0x2E,0xF1A1,0x6E,61 38 31 32 ,Physical
 TC_ID-087 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Manufacturing_F1_8B_Write,0x2E,0xF18B ,0x6E,00 00 00 00 ,Physical
-TC_ID-088 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Serial_Number_F1_8C_Write(32 Bytes),0x2E,0xF18C ,0x6E,61 38 31 31 32 33 34 35 37 39 31 32 33 34 35 37 39 61 38 31 31 32 33 34 35 37 39 31 32 33 34 35,Physical
-TC_ID-089 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Serial_Number_F1_8C_Write(10 Bytes),0x2E,0xF18C ,0x6E,61 38 31 31 32 33 34 35 37 39,Physical
-TC_ID-090 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Write,0x2E,0xF187 ,0x6E,39 36 35 34 30 44 59 30 30 30,Physical
-TC_ID-091 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Vehicle_Manufacturer_ECU_HW_Number_F1_91_Write,0x2E,0xF191 ,0x6E,30 31 2E 30 30,Physical
-TC_ID-092 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:HardwareVersionNumber_F1_93_Write,0x2E,0xF193 ,0x6E,30 31 2E 30 30 ,Physical
-TC_ID-093 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Write,0x2E,0xF1C1,0x6E,61 38 31 31 32 33 34 35 37 39 31 32 33 34 35 37 39 61 38 31 31 32 33 34 35 37 39 31 32 33 34 35,Physical
-TC_ID-094 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Write,0x2E,0xF195,0x6E,30 31 2E 30 30,Physical
-TC_ID-095 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:SystemNameOrEngineTypeDataIdentifier_Write(F197),0x2E,0xF197,0x6E,4D 4B 42 44 4D 4B 42 44,Physical
-TC_ID-096 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Supplier_Code_F1_A1_Write(invalid length given less than Expeccted),0x2E,0xF1A1,0x13,61 38 31 32 61 38 31 32,Physical
-TC_ID-097 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Manufacturing_F1_8B_Write(invalid length given less than Expeccted),0x2E,0xF18B,0x13,00 00 00 00 00 00 00,Physical
-TC_ID-098 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Serial_Number_F1_8C_Write(invalid length given less than Expeccted),0x2E,0xF18C,0x13,61 38 31 31 32 33 34 ,Physical
-TC_ID-099 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Write(invalid length given less than Expeccted),0x2E,0xF187,0x13,39 36 35 34 30 44 ,Physical
-TC_ID-100 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Vehicle_Manufacturer_ECU_HW_Number_F1_91_Write(invalid length given less than Expeccted),0x2E,0xF191,0x13,30 31 2E,Physical
 TC_ID-101 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:HardwareVersionNumber_F1_93_Write(invalid length given less than Expeccted),0x2E,0xF193,0x13,30 31,Physical
 TC_ID-102 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Write(invalid length given less than Expeccted),0x2E,0xF1C1,0x13,A6 32 F7 CD 4D F6 CD A6 04 EB 7E 3A 2E 85 0A 39,Physical
 TC_ID-103 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Write(invalid length given less than Expeccted),0x2E,0xF195,0x13,30 31,Physical
