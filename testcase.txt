@@ -75,3 +75,4 @@ TC_ID-081 , PreCondition: PC_ID-006  Testcase:Tester present(3E 00),0x3E,0x00,0x
 TC_ID-082 , PreCondition: PC_ID-006  Testcase:Sub function not supported(with wrong sub function)(3E FF),0x3E,0xFF,0x12,  ,Physical
 PC_ID-007 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-083 , PreCondition: PC_ID-007  Tester present(3E 00),0x3E,0x00,0x7E,  ,Physical
+TC_ID-084 , PreCondition: PC_ID-007  Sub function not supported(with wrong sub function)(3E FF),0x3E,0xFF,0x12,  ,Physical
