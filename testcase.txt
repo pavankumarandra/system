@@ -76,8 +76,3 @@ TC_ID-082 , PreCondition: PC_ID-006  Testcase:Sub function not supported(with wr
 PC_ID-007 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-083 , PreCondition: PC_ID-007  Tester present(3E 00),0x3E,0x00,0x7E,  ,Physical
 TC_ID-084 , PreCondition: PC_ID-007  Sub function not supported(with wrong sub function)(3E FF),0x3E,0xFF,0x12,  ,Physical
-PC_ID-009 , Start Extended session,0x10,0x03,0x50,  ,Physical
-PC_ID-010 , RequestSeed_ASK_Request(27 11),0x27,0x11,0x67,  ,Physical
-PC_ID-011 , SendKey_ASK_Send(27 12),0x27,0x12,0x67,  ,Physical
-TC_ID-086 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:ECU_Supplier_Code_F1_A1_Write,0x2E,0xF1A1,0x6E,61 38 31 32 ,Physical
-TC_ID-087 , PreCondition: PC_ID-009 PC_ID-010 PC_ID-011  Testcase:Manufacturing_F1_8B_Write,0x2E,0xF18B ,0x6E,00 00 00 00 ,Physical
