@@ -12,25 +12,21 @@ def load_description_map(txt_file_path):
             if not line or line.lower().startswith("#"):
                 continue
             parts = line.split(",")
-            if len(parts) < 8:
+            if len(parts) < 5:
                 continue
             tc_id = parts[0].strip()
             description = parts[1].strip()
             sid = parts[2].strip().replace("0x", "").upper()
             sub = parts[3].strip().replace("0x", "").upper()
-            expected_response_data = parts[4].strip()
-            # Convert expected response data (e.g., "0x10 0x0B 0x62") to byte list
-            expected_bytes = [b.replace("0x", "").upper() for b in expected_response_data.split() if b]
-            format_type = parts[7].strip().capitalize() if len(parts) > 7 else "Hex"
+            positive_response = parts[4].strip().replace("0x", "").upper()
             key = (sid, sub)
-            value = (description, tc_id, expected_bytes, format_type)
+            value = (description, tc_id, positive_response)
             if key not in desc_map:
                 desc_map[key] = []
             desc_map[key].append(value)
     return desc_map
-
-
-def parse_data_bytes(line):
+     #CANFD
+def parse_data_bytes_CANFD(line):
 	tokens = line.strip().split()
 	for i in range(len(tokens) - 11):
 		if tokens[i:i+4] == ['1', '0', '8', '8']:
@@ -40,54 +36,46 @@ def parse_data_bytes(line):
 			  
 	return []
 
+def parse_data_bytes_CAN(line):
+    match = re.search(r'd\s+\d+\s+((?:[0-9A-Fa-f]{2}\s+)+)', line)
+    if match:
+        return match.group(1).strip().split()
+    return []
+
 def get_description(data_bytes):
-    if not data_bytes or len(data_bytes) < 1:
-        return "", "", "", ""
+    if not data_bytes or len(data_bytes) < 2:
+        return "", "", ""
+    sid_index = 2 if data_bytes[0].startswith("1") else 1
+    if len(data_bytes) <= sid_index:
+        return "", "", ""
+    sid = data_bytes[sid_index].upper()
 
-    # Known UDS SIDs — extend as needed
-    known_sids = {"10", "11", "22", "2E", "19", "27", "28", "3E", "31", "14", "85"}
-    sid_index = -1
-    sid = ""
-    for i, byte in enumerate(data_bytes):
-        if byte.upper() in known_sids:
-            sid_index = i
-            sid = byte.upper()
-            break
-
-    if sid_index == -1:
-        return "", "", "", ""
-
-    # Try matching with subfunction (3, 2, or 1 bytes)
-# Try all possible subfunction/DID lengths
-    for length in (3, 2, 1, 0):  # Added 0 to handle cases with only SID
+    # Attempt full (SID + Subfunction/DID) match first
+    for length in (3, 2, 1):
         if sid_index + length < len(data_bytes):
-            sub = ''.join(data_bytes[sid_index + 1: sid_index + 1 + length]).upper() if length > 0 else ""
+            sub = ''.join(data_bytes[sid_index + 1: sid_index + 1 + length]).upper()
             key = (sid, sub)
             if key in DESCRIPTION_MAP:
                 used = getattr(get_description, "used_tc_ids", set())
-                for desc, tc_id, expected_resp, fmt in DESCRIPTION_MAP[key]:
+                for desc, tc_id, expected_resp in DESCRIPTION_MAP[key]:
                     if tc_id not in used:
                         used.add(tc_id)
                         setattr(get_description, "used_tc_ids", used)
-                        return desc, tc_id, expected_resp, fmt
+                        return desc, tc_id, expected_resp
                 return DESCRIPTION_MAP[key][0]
 
-    # Try fallback: SID only
-    key = (sid, "")
-    if key in DESCRIPTION_MAP:
+    # Fallback: try matching just by SID (if sub was missing in .txt)
+    key_sid_only = (sid, "")
+    if key_sid_only in DESCRIPTION_MAP:
         used = getattr(get_description, "used_tc_ids", set())
-        for desc, tc_id, expected_resp in DESCRIPTION_MAP[key]:
+        for desc, tc_id, expected_resp in DESCRIPTION_MAP[key_sid_only]:
             if tc_id not in used:
                 used.add(tc_id)
                 setattr(get_description, "used_tc_ids", used)
                 return desc, tc_id, expected_resp
-        return DESCRIPTION_MAP[key][0]
+        return DESCRIPTION_MAP[key_sid_only][0]
 
-    return "", "", "", ""
-
-
-
-
+    return "", "", ""
 
 def get_failure_reason(nrc):
     reasons = {
@@ -138,75 +126,66 @@ def get_failure_reason(nrc):
     }
     return reasons.get(nrc.upper(), f"Unknown NRC: {nrc}")
 
-def get_status(actual_data, expected_response_data):
-    """
-    Determines Pass/Fail by comparing full actual vs expected response.
-    Handles negative responses with NRCs too.
-    """
-    if not actual_data:
-        return "Fail", "No response received"
-    if not expected_response_data:
-        return "Fail", "Expected response not specified"
+def get_status(data_bytes, expected_resp):
+    if not data_bytes or len(data_bytes) < 3:
+        return "Fail", "Incomplete response"
 
-    actual_data = [b.strip().upper() for b in actual_data if isinstance(b, str)]
-    expected_data = [b.strip().upper() for b in expected_response_data if isinstance(b, str)]
+    if data_bytes[0].upper() == "10":
+        actual_sid = data_bytes[2].upper()
+    else:
+        actual_sid = data_bytes[1].upper()
 
-    # ✅ Match full byte-by-byte
-    if actual_data == expected_data:
+    if actual_sid == "7F":
+        if len(data_bytes) >= 4 and data_bytes[3].upper() == "78":
+            return "Pending", ""
+        nrc = data_bytes[3].upper()
+        if nrc == expected_resp:
+            return "Pass", ""
+        else:
+            return "Fail", get_failure_reason(nrc)
+
+    if actual_sid == expected_resp:
         return "Pass", ""
 
-    # 🟥 Negative Response Handling
-    if len(actual_data) >= 4 and actual_data[1] == "7F":
-        nrc = actual_data[3]
-        return "Fail", f"Negative Response (0x{nrc}: {get_failure_reason(nrc)})"
-
-    return "Fail", "Response mismatch"
-
-
-
-
+    return "Fail", f"Unexpected response: {actual_sid}"
 
 def parse_line(line):
     line = line.strip()
-    if not line or " d " not in line:
+    if not line or ("8" not in line and "d" not in line):
         return None
     parts = line.split()
+    if "8" in line:
+    # Do operation CANFD
+        data_bytes = parse_data_bytes_CANFD(line)
+
+    if "d" in line:
+    # Do operation CAN
+       data_bytes = parse_data_bytes_CAN(line)
+
     try:
         timestamp = float(parts[0])
     except:
         return None
+    
+    direction = parts[3]
+    can_id = parts[4].upper()
+    # data_bytes = parse_data_bytes(line)
     return {
         "timestamp": timestamp,
-        "can_id": parts[2].upper(),
-        "direction": parts[3],
-        "data_bytes": parse_data_bytes(line),
+        "can_id": can_id,
+        "direction": direction,
+        "data_bytes": data_bytes,
         "raw": line
     }
-
-
-
-
-
 
 
 
 def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
     messages_by_tc = defaultdict(list)
     current_request = None
-    pending_first_frame = None
-    assembling_request = False
-    request_buffer = []
-    total_req_len = 0
-    awaiting_response = False
-    response_buffer = []
-    total_resp_len = 0
-    collected_len = 0
+    start_ts, end_ts = None, None
     skip_next_fc = False
     pending_flag = False
-
-    start_ts, end_ts = None, None
-    
-    
     rx_multi_response_pending = False
     rx_multi_response_first = None
     base_datetime = None
@@ -218,7 +197,7 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
         lines = f.readlines()
 
     # Extract base datetime from "Begin Triggerblock ..."
-    for i, line in enumerate(lines):
+    for line in lines:
         if line.startswith("Begin Triggerblock"):
             try:
                 date_str = line.strip().replace("Begin Triggerblock ", "")
@@ -231,120 +210,103 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
         line = line.strip()
         if not line or not re.match(r"^\d+\.\d+", line):
             continue
-
         msg = parse_line(line)  # ✅ This was incorrectly indented before
-        if not msg :
+        if not msg:
             continue
 
-        can_id = msg["can_id"]
+        can_id = msg["can_id"].upper()
         direction = msg["direction"]
-        data = msg["data_bytes"]
+        data_bytes = msg["data_bytes"]
 
         if direction == "Tx" and can_id in allowed_tx_ids:
-            pci_type = data[0].upper()
-            if pci_type == "10":  # First Frame of Multi-Frame Request
-                assembling_request = True
-                total_req_len = int(data[1], 16)
-                request_buffer = data[2:]  # Remove PCI and length
-                pending_first_frame = msg
+            if data_bytes and data_bytes[0].upper() == "10":
                 skip_next_fc = True
-                continue
+            desc, tc_id, expected_resp = get_description(data_bytes)
+            if desc and tc_id:
+                current_request = {
+                    "timestamp": msg["timestamp"],
+                    "can_id": can_id,
+                    "direction": direction,
+                    "data_bytes": data_bytes,
+                    "desc": desc,
+                    "tc_id": tc_id,
+                    "expected_resp": expected_resp,
+                    "status": "Pending"
+                }
 
-            elif skip_next_fc and pci_type == "30":
+        elif direction == "Rx" and can_id in allowed_rx_ids:
+            if skip_next_fc and data_bytes and data_bytes[0].upper() == "30":
                 skip_next_fc = False
                 continue
 
-            elif assembling_request and pci_type.startswith("2"):
-                request_buffer += data[1:]
-                if len(request_buffer) >= total_req_len:
-                    trimmed_data = request_buffer[:total_req_len]
-                    desc, tc_id, expected_resp, fmt = get_description(trimmed_data)
-                    if desc and tc_id:
-                        current_request = {
-                            "timestamp": pending_first_frame["timestamp"],
-                            "can_id": pending_first_frame["can_id"],
-                            "direction": "Tx",
-                            "data_bytes": trimmed_data,
-                            "desc": desc,
-                            "tc_id": tc_id,
-                            "format": fmt,
-                            "expected_resp": expected_resp,
-                            "status": "Pending"
-                        }
-                    assembling_request = False
-                    request_buffer = []
-                    pending_first_frame = None
+            if data_bytes and len(data_bytes) >= 4 and data_bytes[1].upper() == "7F" and data_bytes[3].upper() == "78":
+                pending_flag = True
                 continue
 
-            else:  # Single-Frame Request
-                desc, tc_id, expected_resp, fmt = get_description(data)
-                if desc and tc_id:
-                    current_request = {
-                        "timestamp": msg["timestamp"],
-                        "can_id": can_id,
-                        "direction": direction,
-                        "data_bytes": data,
-                        "desc": desc,
-                        "tc_id": tc_id,
-                        "format": fmt,
-                        "expected_resp": expected_resp,
-                        "status": "Pending"
-                    }
+            if data_bytes and data_bytes[0].upper() == "10":
+                rx_multi_response_first = msg
+                rx_multi_response_pending = True
+                continue
 
-        # 🟥 Rx: Handle Response
-        elif direction == "Rx" and can_id == "71E" and current_request:
-            pci_type = data[0].upper()
+            if rx_multi_response_pending and data_bytes and data_bytes[0].upper() == "21":
+                combined_bytes = rx_multi_response_first["data_bytes"][:7] + data_bytes[1:]
+                rx_msg = {
+                    "timestamp": rx_multi_response_first["timestamp"],
+                    "can_id": rx_multi_response_first["can_id"],
+                    "direction": rx_multi_response_first["direction"],
+                    "data_bytes": combined_bytes
+                }
+                if current_request:
+                    status, reason = get_status(combined_bytes, current_request.get("expected_resp", ""))
+                    current_request.update({
+                        "response": rx_msg,
+                        "status": status,
+                        "failure_reason": reason
+                    })
+                    messages_by_tc[current_request["tc_id"]].append(current_request)
 
-            if pci_type == "30":
-                continue  # Ignore flow control
+                    req_ts = current_request["timestamp"]
+                    res_ts = rx_msg["timestamp"]
+                    start_ts = min(start_ts or req_ts, req_ts)
+                    end_ts = max(end_ts or res_ts, res_ts)
+                    current_request = None
 
-            # Handle 0x7F xx 78 pending response
-            if len(data) >= 4 and data[1].upper() == "7F" and data[3].upper() == "78":
-                pending_flag = True
-                continue  # Ignore pending response
+                rx_multi_response_pending = False
+                rx_multi_response_first = None
+                continue
 
             if pending_flag:
+                if current_request:
+                    status, reason = get_status(data_bytes, current_request.get("expected_resp", ""))
+                    current_request.update({
+                        "response": msg,
+                        "status": status,
+                        "failure_reason": reason
+                    })
+                    messages_by_tc[current_request["tc_id"]].append(current_request)
+
+                    req_ts = current_request["timestamp"]
+                    res_ts = msg["timestamp"]
+                    start_ts = min(start_ts or req_ts, req_ts)
+                    end_ts = max(end_ts or res_ts, res_ts)
+                    current_request = None
                 pending_flag = False
-                full_resp = data  # Treat next frame as actual response
-            else:
-                if pci_type == "10":  # First frame of multi-frame response
-                    total_resp_len = int(data[1], 16)
-                    response_buffer = data[:]  # include full frame including PCI
-                    collected_len = len(data) - 2  # remove PCI and LEN from payload count
-                    awaiting_response = True
-                    continue
+                continue
 
-                elif pci_type.startswith("2") and awaiting_response:
-                    response_buffer += data[1:]  # exclude PCI
-                    collected_len += len(data) - 1
-                    if collected_len >= total_resp_len:
-                        full_resp = response_buffer
-                        awaiting_response = False
-                    else:
-                        continue
-                else:
-                    if awaiting_response:
-                        response_buffer += data[1:]
-                        full_resp = response_buffer
-                        awaiting_response = False
-                    else:
-                        full_resp = data
+            if current_request:
+                status, reason = get_status(data_bytes, current_request.get("expected_resp", ""))
+                current_request.update({
+                    "response": msg,
+                    "status": status,
+                    "failure_reason": reason
+                })
+                messages_by_tc[current_request["tc_id"]].append(current_request)
 
-            # ✅ Evaluate response
-            status, reason = get_status(full_resp, current_request["expected_resp"])
-            current_request.update({
-                "response": msg,
-                "response_data_bytes": full_resp,
-                "status": status,
-                "failure_reason": reason
-            })
-            messages_by_tc[current_request["tc_id"]].append(current_request)
-
-            start_ts = min(start_ts or msg["timestamp"], current_request["timestamp"])
-            end_ts = max(end_ts or msg["timestamp"], msg["timestamp"])
-
-            current_request = None
-            response_buffer = []
+                req_ts = current_request["timestamp"]
+                res_ts = msg["timestamp"]
+                start_ts = min(start_ts or req_ts, req_ts)
+                end_ts = max(end_ts or res_ts, res_ts)
+                current_request = None
 
     return messages_by_tc, start_ts or 0, end_ts or 0, base_datetime
 
@@ -352,53 +314,7 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
 
 
 
-
-
-
-
-
-
-
-
-
-
-import datetime
-from html import escape
-
-def flatten_bytes(data):
-    flat = []
-    for item in data:
-        if isinstance(item, list):
-            flat.extend(item)
-        else:
-            flat.append(item)
-    return flat
-def remove_trailing_padding(data_list, pad_byte):
-    # Remove only trailing occurrences of pad_byte (like "00" or "AA")
-    i = len(data_list)
-    while i > 0 and data_list[i - 1].upper() == pad_byte.upper():
-        i -= 1
-    return data_list[:i]
-
-def get_valid_request_data(data_bytes):
-    """
-    Extracts the actual data from a UDS request.
-    Assumes the first byte is the PCI, which tells us how many bytes follow.
-    """
-    if not data_bytes:
-        return data_bytes
-    try:
-        pci = int(data_bytes[0], 16)
-        if pci <= 0x07:
-            # Single-frame: first byte is length of remaining data
-            total_len = pci + 1  # include PCI itself
-            return data_bytes[:total_len]
-    except:
-        pass
-    return data_bytes
 def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, end_ts, ecu_info_data=None, target_ecu=None, base_datetime=None):
-    def remove_padding(data_list, pad_byte):
-        return [byte for byte in data_list if byte.upper() != pad_byte.upper()]
     total = len(messages_by_tc)
     passed = sum(1 for tc in messages_by_tc.values() if all(msg["status"] == "Pass" for msg in tc))
     failed = total - passed
@@ -460,103 +376,65 @@ def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, en
         <p><strong>Test Duration:</strong> {duration:.3f} seconds</p>
         
     </div>
-    <button onclick="document.querySelectorAll('.case-block').forEach(el => el.style.display='');">Show All</button>
+
     <div id="chart-container" style="width: 320px; margin-left:70px;">
         <canvas id="passFailChart" width="300" height="300"></canvas>
     </div>
 </div>
 
-    <script>
-        const ctx = document.getElementById('passFailChart').getContext('2d');
-        const chart = new Chart(ctx, {{
-            type: 'pie',
-            data: {{
-                labels: ['Passed', 'Failed'],
-                datasets: [{{
-                    data: [{passed}, {failed}],
-                    backgroundColor: ['#4CAF50', '#F44336']
-                }}]
-            }},
-            options: {{
-                responsive: true,
-                onClick: function (evt, item) {{
-                    const segment = chart.getElementsAtEventForMode(evt, 'nearest', {{ intersect: true }}, true);
-                    if (!segment.length) return;
-                    const label = chart.data.labels[segment[0].index];
-                    document.querySelectorAll('.case-block').forEach(el => el.style.display = 'none');
-                    if (label === 'Passed') {{
-                        document.querySelectorAll('.pass-case').forEach(el => el.style.display = '');
-                    }} else if (label === 'Failed') {{
-                        document.querySelectorAll('.fail-case').forEach(el => el.style.display = '');
-                    }}
-                }},
-                plugins: {{
-                    legend: {{ position: 'bottom' }},
-                    title: {{ display: true, text: 'Test Case Results' }}
-                }}
-            }}
-        }});
-    </script>
+<script>
+  const ctx = document.getElementById('passFailChart').getContext('2d');
+  new Chart(ctx, {{
+    type: 'pie',
+    data: {{
+      labels: ['Passed', 'Failed'],
+      datasets: [{{
+        data: [{passed}, {failed}],
+        backgroundColor: ['#4CAF50', '#F44336']
+      }}]
+    }},
+    options: {{
+      responsive: true,
+      plugins: {{
+        legend: {{ position: 'bottom' }},
+        title: {{ display: true, text: 'Test Case Results' }}
+      }}
+    }}
+  }});
+</script>
 
-    <hr><br>
-    """
+<hr><br>
+"""
 
     for tc_id, steps in messages_by_tc.items():
         status = steps[0]['status']
-        status_class = 'pass' if status == 'Pass' else 'fail' if status == 'Fail' else 'pending'
-        html += f"<div class='case-block {status_class}-case'>\n"
+        status_class = 'pass' if status == 'Pass' else 'fail'
         html += f"<details><summary>{tc_id} - <span class='{status_class}'>{status}</span></summary>\n"
-        html += """<table><tr><th>Step</th><th>Description</th><th>Timestamp</th><th>Type</th><th>Data</th><th>Status</th><th>Failure Reason</th></tr>\n"""
-        
+        html += """<table><tr><th>Step</th><th>Description</th><th>Timestamp</th><th>Type</th><th>Status</th><th>Failure Reason</th></tr>\n"""
+
         step_count = 1
         for msg in steps:
-            # Remove padding (00) from request
-            req_bytes = remove_trailing_padding(msg.get('data_bytes', []), "00")
-            req_data = get_valid_request_data(msg.get('data_bytes', []))
-            req_data_str = ' '.join(flatten_bytes(req_data))
+            desc = msg['desc']
+            combined_desc = ""
 
-            html += f"<tr><td>{step_count}</td><td>{escape(msg['desc'])}</td><td>{msg['timestamp']:.6f}</td><td>Request Sent</td><td>{req_data_str}</td><td></td><td>-</td></tr>\n"
+            if "PreCondition:" in desc and "Testcase" in desc:
+                parts = desc.split("PreCondition:", 1)[1].split("Testcase", 1)
+                pre_detail = parts[0].strip()
+                tc_detail = parts[1].strip()
+                combined_desc = f"<b>PreCondition:</b> {escape(pre_detail)}<br><b>Testcase:</b>{escape(tc_detail)}"
+            elif "PreCondition:" in desc:
+                pre_detail = desc.split("PreCondition:", 1)[1].strip()
+                combined_desc = f"<b>PreCondition:</b> {escape(pre_detail)}"
+            else:
+                combined_desc = escape(desc.strip())
+
+            html += f"<tr><td>{step_count}</td><td>{combined_desc}</td><td>{msg['timestamp']:.6f}</td><td>Request Sent</td><td></td><td>-</td></tr>\n"
             step_count += 1
-
             response = msg.get("response", {})
-            raw_resp = msg.get("response_data_bytes", response.get("data_bytes", []))
-            # Remove padding (AA) from response
-            clean_resp = remove_trailing_padding(raw_resp, "AA")
-            format_type = msg.get("format", "Hex").strip().lower()
-            try:
-                full_hex_str = ' '.join(clean_resp)
-                # Default: full clean response if parsing fails
-                payload = clean_resp
-
-                # Locate 0x62 and skip SID + DID
-                if "62" in [b.upper() for b in clean_resp]:
-                    idx = next(i for i, b in enumerate(clean_resp) if b.upper() == "62")
-                    if len(clean_resp) > idx + 2:
-                        payload = clean_resp[idx + 3:]
-                    else:
-                        payload = []
-                else:
-                    payload = clean_resp
-
-                # Format conversion
-                if format_type == "ascii":
-                    ascii_str = ''.join(chr(int(b, 16)) for b in payload if 32 <= int(b, 16) <= 126)
-                    response_data_str = f"{full_hex_str} → {ascii_str}" if ascii_str else full_hex_str
-
-                elif format_type == "decimal":
-                    decimal_str = ' '.join(str(int(b, 16)) for b in payload)
-                    response_data_str = f"{full_hex_str} → {decimal_str}" if decimal_str else full_hex_str
-
-                else:  # default hex
-                    response_data_str = full_hex_str
-
-            except Exception:
-                response_data_str = ' '.join(clean_resp)
-
-            html += f"<tr><td>{step_count}</td><td></td><td>{response.get('timestamp', 0):.6f}</td><td>Response Received</td><td>{response_data_str}</td><td>{msg['status']}</td><td>{msg.get('failure_reason', '')}</td></tr>\n"
+            html += f"<tr><td>{step_count}</td><td></td><td>{response.get('timestamp', ''):.6f}</td><td>Response Received</td><td>{msg['status']}</td><td>{msg.get('failure_reason', '')}</td></tr>\n"
             step_count += 1
-        
-        html += "</table></details></div>\n"
+
+        html += "</table></details>\n"
 
     html += "</body></html>"
 
