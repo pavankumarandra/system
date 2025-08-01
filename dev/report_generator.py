@@ -27,6 +27,7 @@ def load_description_map(txt_file_path):
     return desc_map
      #CANFD
 def parse_data_bytes_CANFD(line):
+	print("555555555555555555")
 	tokens = line.strip().split()
 	for i in range(len(tokens) - 11):
 		if tokens[i:i+4] == ['1', '0', '8', '8']:
@@ -36,7 +37,9 @@ def parse_data_bytes_CANFD(line):
 			  
 	return []
 
-def parse_data_bytes_CAN(line):
+def parse_data_bytes_CAN(line):	
+    print(f"✅ ###############################{line}\n")
+    print("44444444444444444444444")
     match = re.search(r'd\s+\d+\s+((?:[0-9A-Fa-f]{2}\s+)+)', line)
     if match:
         return match.group(1).strip().split()
@@ -151,17 +154,21 @@ def get_status(data_bytes, expected_resp):
 
 def parse_line(line):
     line = line.strip()
-    if not line or ("8" not in line and "d" not in line):
+    if not line or ("d" not in line and "8" not in line):
         return None
     parts = line.split()
-    if "8" in line:
-    # Do operation CANFD
-        data_bytes = parse_data_bytes_CANFD(line)
 
     if "d" in line:
     # Do operation CAN
-       data_bytes = parse_data_bytes_CAN(line)
-
+       print("2222222222222222222")     
+       data_bytes_1 = parse_data_bytes_CAN(line)
+       print(f"✅ ###############################{data_bytes_1}\n")
+       
+    elif "8" in line:
+    # Do operation CANFD
+        print("3333333333333333333333333")     
+        data_bytes_1 = parse_data_bytes_CANFD(line)
+        
     try:
         timestamp = float(parts[0])
     except:
@@ -169,7 +176,7 @@ def parse_line(line):
     
     direction = parts[3]
     can_id = parts[4].upper()
-    # data_bytes = parse_data_bytes(line)
+    data_bytes = data_bytes_1 
     return {
         "timestamp": timestamp,
         "can_id": can_id,
