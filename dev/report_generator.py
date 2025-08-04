@@ -1,473 +1,94 @@
 import os
-import re
+import sys
+import time
+import json
+import logging
 import datetime
-from collections import defaultdict
-from html import escape
+from utils import clear_console, display_testcase_summary
+from uds_client import UDSClient
+from drivers import oled_display, button
 
-def load_description_map(txt_file_path):
-    desc_map = {}
-    with open(txt_file_path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.lower().startswith("#"):
-                continue
-            parts = line.split(",")
-            if len(parts) < 5:
-                continue
-            tc_id = parts[0].strip()
-            description = parts[1].strip()
-            sid = parts[2].strip().replace("0x", "").upper()
-            sub = parts[3].strip().replace("0x", "").upper()
-            positive_response = parts[4].strip().replace("0x", "").upper()
-            key = (sid, sub)
-            value = (description, tc_id, positive_response)
-            if key not in desc_map:
-                desc_map[key] = []
-            desc_map[key].append(value)
-    return desc_map
-     #CANFD
-def parse_data_bytes_CANFD(line):
-	print("555555555555555555")
-	tokens = line.strip().split()
-	for i in range(len(tokens) - 11):
-		if tokens[i:i+4] == ['1', '0', '8', '8']:
-			data_bytes = tokens[i+4:i+12]
-			if all(len(b) == 2 and all(c in '0123456789ABCDEFabcdef' for c in b) for b in data_bytes):	
-				return data_bytes
-			  
-	return []
+class UDSApp:
+    def __init__(self):
+        self.client = UDSClient()
+        self.oled = None
+        self.tester_name = None
+        try:
+            self.oled = oled_display.OLED()
+            logging.info("OLED initialized successfully.")
+        except Exception as e:
+            logging.warning(f"OLED initialization failed: {e}")
+        self.test_cases = self.load_test_cases()
 
-def parse_data_bytes_CAN(line):	
-    print(f"✅ ###############################{line}\n")
-    print("44444444444444444444444")
-    match = re.search(r'd\s+\d+\s+((?:[0-9A-Fa-f]{2}\s+)+)', line)
-    if match:
-        return match.group(1).strip().split()
-    return []
+    def load_test_cases(self):
+        if os.path.exists("test_cases.json"):
+            with open("test_cases.json", "r") as f:
+                return json.load(f)
+        return []
 
-def get_description(data_bytes):
-    if not data_bytes or len(data_bytes) < 2:
-        return "", "", ""
-    sid_index = 2 if data_bytes[0].startswith("1") else 1
-    if len(data_bytes) <= sid_index:
-        return "", "", ""
-    sid = data_bytes[sid_index].upper()
+    def save_test_cases(self):
+        with open("test_cases.json", "w") as f:
+            json.dump(self.test_cases, f, indent=4)
 
-    # Attempt full (SID + Subfunction/DID) match first
-    for length in (3, 2, 1):
-        if sid_index + length < len(data_bytes):
-            sub = ''.join(data_bytes[sid_index + 1: sid_index + 1 + length]).upper()
-            key = (sid, sub)
-            if key in DESCRIPTION_MAP:
-                used = getattr(get_description, "used_tc_ids", set())
-                for desc, tc_id, expected_resp in DESCRIPTION_MAP[key]:
-                    if tc_id not in used:
-                        used.add(tc_id)
-                        setattr(get_description, "used_tc_ids", used)
-                        return desc, tc_id, expected_resp
-                return DESCRIPTION_MAP[key][0]
-
-    # Fallback: try matching just by SID (if sub was missing in .txt)
-    key_sid_only = (sid, "")
-    if key_sid_only in DESCRIPTION_MAP:
-        used = getattr(get_description, "used_tc_ids", set())
-        for desc, tc_id, expected_resp in DESCRIPTION_MAP[key_sid_only]:
-            if tc_id not in used:
-                used.add(tc_id)
-                setattr(get_description, "used_tc_ids", used)
-                return desc, tc_id, expected_resp
-        return DESCRIPTION_MAP[key_sid_only][0]
-
-    return "", "", ""
-
-def get_failure_reason(nrc):
-    reasons = {
-        "10" : "generalReject",
-        "11" : "serviceNotSupported",
-        "12" : "subFunctionNotSupported",
-        "13" : "incorrectMessageLengthOrInvalidFormat",
-        "14" : "responseTooLong",
-        "21" : "busyRepeatReques",
-        "22" : "conditionsNotCorrect",
-        "23" : "ISOSAEReserved",
-        "24" : "requestSequenceError",
-        "31" : "requestOutOfRange",
-        "32" : "ISOSAEReserved",
-        "33" : "securityAccessDenied",
-        "34" : "ISOSAEReserved",
-        "35" : "invalidKey",
-        "36" : "exceedNumberOfAttempts",
-        "37" : "requiredTimeDelayNotExpired",
-        "70" : "uploadDownloadNotAccepted",
-        "71" : "transferDataSuspended",
-        "72" : "generalProgrammingFailure",
-        "73" : "wrongBlockSequenceCounter",
-        "78" : "requestCorrectlyReceived-ResponsePending",
-        "7E" : "subFunctionNotSupportedInActiveSession",
-        "7F" : "serviceNotSupportedInActiveSession",
-        "80" : "ISOSAEReserved",
-        "81" : "rpmTooHigh",
-        "82" : "rpmTooLow",
-        "83" : "engineIsRunning",
-        "84" : "engineIsNotRunning",
-        "85" : "engineRunTimeTooLow",
-        "86" : "temperatureTooHigh",
-        "87" : "temperatureTooLow",
-        "88" : "vehicleSpeedTooHigh",
-        "89" : "vehicleSpeedTooLow",
-        "8A" : "throttle/PedalTooHigh",
-        "8B" : "throttle/PedalTooLow",
-        "8C" : "transmissionRangeNotInNeutral",
-        "8D" : "transmissionRangeNotInGear",
-        "8E" : "ISOSAEReserved",
-        "8F" : "brakeSwitch(es)NotClosed (Brake Pedal not pressed or not applied)",
-        "90" : "shifterLeverNotInPark",
-        "91" : "torqueConverterClutchLocked",
-        "92" : "voltageTooHigh",
-        "93" : "voltageTooLow",
-        "FF" : "ISOSAEReserved",
-    }
-    return reasons.get(nrc.upper(), f"Unknown NRC: {nrc}")
-
-def get_status(data_bytes, expected_resp):
-    if not data_bytes or len(data_bytes) < 3:
-        return "Fail", "Incomplete response"
-
-    if data_bytes[0].upper() == "10":
-        actual_sid = data_bytes[2].upper()
-    else:
-        actual_sid = data_bytes[1].upper()
-
-    if actual_sid == "7F":
-        if len(data_bytes) >= 4 and data_bytes[3].upper() == "78":
-            return "Pending", ""
-        nrc = data_bytes[3].upper()
-        if nrc == expected_resp:
-            return "Pass", ""
-        else:
-            return "Fail", get_failure_reason(nrc)
-
-    if actual_sid == expected_resp:
-        return "Pass", ""
-
-    return "Fail", f"Unexpected response: {actual_sid}"
-
-def parse_line(line):
-    line = line.strip()
-    if not line or ("d" not in line and "8" not in line):
-        return None
-    parts = line.split()
-
-    if "d" in line:
-    # Do operation CAN
-       print("2222222222222222222")     
-       data_bytes_1 = parse_data_bytes_CAN(line)
-       print(f"✅ ###############################{data_bytes_1}\n")
-       
-    elif "8" in line:
-    # Do operation CANFD
-        print("3333333333333333333333333")     
-        data_bytes_1 = parse_data_bytes_CANFD(line)
-        
-    try:
-        timestamp = float(parts[0])
-    except:
-        return None
-    
-    direction = parts[3]
-    can_id = parts[4].upper()
-    data_bytes = data_bytes_1 
-    return {
-        "timestamp": timestamp,
-        "can_id": can_id,
-        "direction": direction,
-        "data_bytes": data_bytes,
-        "raw": line
-    }
-
-
-
-def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
-    messages_by_tc = defaultdict(list)
-    current_request = None
-    start_ts, end_ts = None, None
-    skip_next_fc = False
-    pending_flag = False
-    rx_multi_response_pending = False
-    rx_multi_response_first = None
-    base_datetime = None
-
-    allowed_tx_ids = set(f"{id:X}" for id in allowed_tx_ids)
-    allowed_rx_ids = set(f"{id:X}" for id in allowed_rx_ids)
-
-    with open(asc_file_path, "r", encoding="utf-8", errors="ignore") as f:
-        lines = f.readlines()
-
-    # Extract base datetime from "Begin Triggerblock ..."
-    for line in lines:
-        if line.startswith("Begin Triggerblock"):
-            try:
-                date_str = line.strip().replace("Begin Triggerblock ", "")
-                base_datetime = datetime.datetime.strptime(date_str, "%a %b %d %I:%M:%S.%f %p %Y")
-            except ValueError:
-                base_datetime = None
-            break
-
-    for line in lines:
-        line = line.strip()
-        if not line or not re.match(r"^\d+\.\d+", line):
-            continue
-        msg = parse_line(line)  # ✅ This was incorrectly indented before
-        if not msg:
-            continue
-
-        can_id = msg["can_id"].upper()
-        direction = msg["direction"]
-        data_bytes = msg["data_bytes"]
-
-        if direction == "Tx" and can_id in allowed_tx_ids:
-            if data_bytes and data_bytes[0].upper() == "10":
-                skip_next_fc = True
-            desc, tc_id, expected_resp = get_description(data_bytes)
-            if desc and tc_id:
-                current_request = {
-                    "timestamp": msg["timestamp"],
-                    "can_id": can_id,
-                    "direction": direction,
-                    "data_bytes": data_bytes,
-                    "desc": desc,
-                    "tc_id": tc_id,
-                    "expected_resp": expected_resp,
-                    "status": "Pending"
-                }
-
-        elif direction == "Rx" and can_id in allowed_rx_ids:
-            if skip_next_fc and data_bytes and data_bytes[0].upper() == "30":
-                skip_next_fc = False
-                continue
-
-            if data_bytes and len(data_bytes) >= 4 and data_bytes[1].upper() == "7F" and data_bytes[3].upper() == "78":
-                pending_flag = True
-                continue
-
-            if data_bytes and data_bytes[0].upper() == "10":
-                rx_multi_response_first = msg
-                rx_multi_response_pending = True
-                continue
-
-            if rx_multi_response_pending and data_bytes and data_bytes[0].upper() == "21":
-                combined_bytes = rx_multi_response_first["data_bytes"][:7] + data_bytes[1:]
-                rx_msg = {
-                    "timestamp": rx_multi_response_first["timestamp"],
-                    "can_id": rx_multi_response_first["can_id"],
-                    "direction": rx_multi_response_first["direction"],
-                    "data_bytes": combined_bytes
-                }
-                if current_request:
-                    status, reason = get_status(combined_bytes, current_request.get("expected_resp", ""))
-                    current_request.update({
-                        "response": rx_msg,
-                        "status": status,
-                        "failure_reason": reason
-                    })
-                    messages_by_tc[current_request["tc_id"]].append(current_request)
-
-                    req_ts = current_request["timestamp"]
-                    res_ts = rx_msg["timestamp"]
-                    start_ts = min(start_ts or req_ts, req_ts)
-                    end_ts = max(end_ts or res_ts, res_ts)
-                    current_request = None
-
-                rx_multi_response_pending = False
-                rx_multi_response_first = None
-                continue
-
-            if pending_flag:
-                if current_request:
-                    status, reason = get_status(data_bytes, current_request.get("expected_resp", ""))
-                    current_request.update({
-                        "response": msg,
-                        "status": status,
-                        "failure_reason": reason
-                    })
-                    messages_by_tc[current_request["tc_id"]].append(current_request)
-
-                    req_ts = current_request["timestamp"]
-                    res_ts = msg["timestamp"]
-                    start_ts = min(start_ts or req_ts, req_ts)
-                    end_ts = max(end_ts or res_ts, res_ts)
-                    current_request = None
-                pending_flag = False
-                continue
-
-            if current_request:
-                status, reason = get_status(data_bytes, current_request.get("expected_resp", ""))
-                current_request.update({
-                    "response": msg,
-                    "status": status,
-                    "failure_reason": reason
-                })
-                messages_by_tc[current_request["tc_id"]].append(current_request)
-
-                req_ts = current_request["timestamp"]
-                res_ts = msg["timestamp"]
-                start_ts = min(start_ts or req_ts, req_ts)
-                end_ts = max(end_ts or res_ts, res_ts)
-                current_request = None
-
-    return messages_by_tc, start_ts or 0, end_ts or 0, base_datetime
-
-
-
-
-
-def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, end_ts, ecu_info_data=None, target_ecu=None, base_datetime=None):
-    total = len(messages_by_tc)
-    passed = sum(1 for tc in messages_by_tc.values() if all(msg["status"] == "Pass" for msg in tc))
-    failed = total - passed
-    duration = end_ts - start_ts
-    generated_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Format Start_Timestamp and End_Timestamp
-    if base_datetime:
-        start_dt = base_datetime + datetime.timedelta(seconds=start_ts)
-        end_dt = base_datetime + datetime.timedelta(seconds=end_ts)
-        Start_Timestamp = start_dt.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-        End_Timestamp = end_dt.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-    else:
-        Start_Timestamp = f"{start_ts:.3f} seconds"
-        End_Timestamp = f"{end_ts:.3f} seconds"
-
-    html = f"""<!DOCTYPE html>
-<html>
-<head><title>UDS Diagnostic Report</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body {{ font-family: Arial; margin: 20px; }}
-  .pass {{ color: green; font-weight: bold; }}
-  .fail {{ color: red; font-weight: bold; }}
-  .wrapper {{
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 50px;
-    margin-top: 20px;
-  }}
-  .summary-block {{ text-align: left; min-width: 250px; }}
-  #chart-container {{ width: 300px; }}
-  table {{ border-collapse: collapse; width: 100%; margin-top: 10px; }}
-  th, td {{ border: 1px solid #ccc; padding: 8px; }}
-  th {{ background: #f0f0f0; }}
-  summary {{ font-weight: bold; cursor: pointer; }}
-</style>
-</head>
-<body>
-
-<h1 style="text-align: center;">UDS Diagnostic Report</h1>
-
-<div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 40px; margin-top: 20px; padding-left: 10px;">
-    <div style="width: 650px;">
-    
-        {f"<p><strong>Target ECU:</strong> {escape(target_ecu)}</p>" if target_ecu else ""}
-        {"".join(f"<p><strong>{escape(k)}:</strong> {escape(v)}</p>" for k, v in ecu_info_data.items()) if ecu_info_data else ""}
-        
-        <hr style="width: 300px;border:1px solid #999; margin:25px 0;">
-        
-        <p><strong>Generated:</strong> {generated_time}</p>
-        <p><strong>CAN Log File:</strong> {asc_filename}</p>
-        <p><strong>Total Test Cases:</strong> {total}</p>
-        <p class="pass"><strong>Passed:</strong> {passed}</p>
-        <p class="fail"><strong>Failed:</strong> {failed}</p>
-        <p><strong>Start_Time:</strong> {Start_Timestamp}</p>
-        <p><strong>End_Time:</strong> {End_Timestamp}</p>
-        <p><strong>Test Duration:</strong> {duration:.3f} seconds</p>
-        
-    </div>
-
-    <div id="chart-container" style="width: 320px; margin-left:70px;">
-        <canvas id="passFailChart" width="300" height="300"></canvas>
-    </div>
-</div>
-
-<script>
-  const ctx = document.getElementById('passFailChart').getContext('2d');
-  new Chart(ctx, {{
-    type: 'pie',
-    data: {{
-      labels: ['Passed', 'Failed'],
-      datasets: [{{
-        data: [{passed}, {failed}],
-        backgroundColor: ['#4CAF50', '#F44336']
-      }}]
-    }},
-    options: {{
-      responsive: true,
-      plugins: {{
-        legend: {{ position: 'bottom' }},
-        title: {{ display: true, text: 'Test Case Results' }}
-      }}
-    }}
-  }});
-</script>
-
-<hr><br>
-"""
-
-    for tc_id, steps in messages_by_tc.items():
-        status = steps[0]['status']
-        status_class = 'pass' if status == 'Pass' else 'fail'
-        html += f"<details><summary>{tc_id} - <span class='{status_class}'>{status}</span></summary>\n"
-        html += """<table><tr><th>Step</th><th>Description</th><th>Timestamp</th><th>Type</th><th>Status</th><th>Failure Reason</th></tr>\n"""
-
-        step_count = 1
-        for msg in steps:
-            desc = msg['desc']
-            combined_desc = ""
-
-            if "PreCondition:" in desc and "Testcase" in desc:
-                parts = desc.split("PreCondition:", 1)[1].split("Testcase", 1)
-                pre_detail = parts[0].strip()
-                tc_detail = parts[1].strip()
-                combined_desc = f"<b>PreCondition:</b> {escape(pre_detail)}<br><b>Testcase:</b>{escape(tc_detail)}"
-            elif "PreCondition:" in desc:
-                pre_detail = desc.split("PreCondition:", 1)[1].strip()
-                combined_desc = f"<b>PreCondition:</b> {escape(pre_detail)}"
+    def get_tester_name(self):
+        while True:
+            name = input("Enter Tester Name: ").strip()
+            if name:
+                self.tester_name = name
+                logging.info(f"Tester: {self.tester_name}")
+                with open("tester_info.txt", "w") as f:
+                    f.write(f"Tester: {self.tester_name}\n")
+                if self.oled:
+                    self.oled.display_centered_text(f"Tester:\n{self.tester_name}")
+                    time.sleep(2)
+                break
             else:
-                combined_desc = escape(desc.strip())
+                print("Name cannot be empty. Please try again.")
 
-            html += f"<tr><td>{step_count}</td><td>{combined_desc}</td><td>{msg['timestamp']:.6f}</td><td>Request Sent</td><td></td><td>-</td></tr>\n"
-            step_count += 1
-            response = msg.get("response", {})
-            html += f"<tr><td>{step_count}</td><td></td><td>{response.get('timestamp', ''):.6f}</td><td>Response Received</td><td>{msg['status']}</td><td>{msg.get('failure_reason', '')}</td></tr>\n"
-            step_count += 1
+    def main_menu(self):
+        while True:
+            clear_console()
+            print("UDS Diagnostic Tool")
+            print("====================")
+            print("1. Run UDS Test Cases")
+            print("2. View Test Case Summary")
+            print("3. Exit")
+            choice = input("Enter your choice: ").strip()
 
-        html += "</table></details>\n"
+            if choice == "1":
+                self.run_test_cases()
+            elif choice == "2":
+                display_testcase_summary(self.test_cases)
+                input("Press Enter to return to the main menu...")
+            elif choice == "3":
+                print("Exiting...")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+                time.sleep(2)
 
-    html += "</body></html>"
+    def run_test_cases(self):
+        if not self.test_cases:
+            print("No test cases found.")
+            time.sleep(2)
+            return
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
+        for test_case in self.test_cases:
+            print(f"Running Test Case: {test_case['id']} - {test_case['description']}")
+            result = self.client.run_test_case(test_case)
+            test_case['result'] = result
+            print(f"Result: {result}\n")
+            time.sleep(1)
 
-    print(f"✅ UDS HTML Report generated at:\n{output_path}\n")
+        self.save_test_cases()
+        print("All test cases executed.")
+        time.sleep(2)
 
-def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_ids, allowed_rx_ids, ecu_info_data=None, target_ecu=None):
-    global DESCRIPTION_MAP
-    DESCRIPTION_MAP = load_description_map(txt_file_path)
-    get_description.used_tc_ids = set()
+def main():
+    app = UDSApp()
+    app.get_tester_name()
+    app.main_menu()
 
-    messages_by_tc, start_ts, end_ts, base_datetime = parse_asc_file(
-        asc_file_path, allowed_tx_ids, allowed_rx_ids
-    )
-
-    report_path = output_html_file
-
-    generate_html_report(
-        messages_by_tc,
-        report_path,
-        os.path.basename(asc_file_path),
-        start_ts,
-        end_ts,
-        ecu_info_data,
-        target_ecu,
-        base_datetime
-    )
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    main()
