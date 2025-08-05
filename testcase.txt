@@ -2,10 +2,10 @@
 PC_ID-001 , PreCondition: PC_ID-001  Testcase: Start Default session,0x10,0x01,0x50,  ,Physical
 TC_ID-001 , PreCondition: PC_ID-001  Testcase:  Start Default session,0x10,0x01,0x50,  ,Physical
 TC_ID-002 , PreCondition: PC_ID-001  Testcase:  Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-003 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in past,0x19,0x02  0x08,0x59,nan,Physical
-TC_ID-004 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in present,0x19,0x02  0x01,0x59,nan,Physical
-TC_ID-005 , PreCondition: PC_ID-001  Testcase:  Start reportNumberofDTCByStatusMask in past,0x19,0x01  0x08,0x59,nan,Physical
-TC_ID-006 , PreCondition: PC_ID-001  Testcase:   Start reportNumberofDTCByStatusMask in present,0x19,0x01  0x01,0x59,nan,Physical
+TC_ID-003 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in past,0x19,0x0208,0x59,nan,Physical
+TC_ID-004 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in present,0x19,0x0201,0x59,nan,Physical
+TC_ID-005 , PreCondition: PC_ID-001  Testcase:  Start reportNumberofDTCByStatusMask in past,0x19,0x0108,0x59,nan,Physical
+TC_ID-006 , PreCondition: PC_ID-001  Testcase:   Start reportNumberofDTCByStatusMask in present,0x19,0x0101,0x59,nan,Physical
 TC_ID-007 , PreCondition: PC_ID-001  Testcase:  Start Report Supported DTC,0x19,0x0A,0x59,nan,Physical
 TC_ID-008 , PreCondition: PC_ID-001  Testcase: Hard reset,0x11,0x01,0x51,  ,Physical
 TC_ID-009 , PreCondition: PC_ID-001  Testcase: Soft reset,0x11,0x03,0x51,  ,Physical
