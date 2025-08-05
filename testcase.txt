@@ -1,78 +1,153 @@
 #TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing
-ECU_INFO-1 , S/W Version,0x22,0xF1DD,0x62,  ,Physical
-ECU_INFO-2 , B-CAN Version,0x22,0xF100,0x62,  ,Physical
-ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,0x62,  ,Physical
-ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,0x62,  ,Physical
-ECU_INFO-5 , H/W Version,0x22,0xF193,0x62,  ,Physical
-TC_ID-001 , Start default session,0x10,0x01,0x50,  ,Physical
-TC_ID-003 , Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-004 , Sub function not supported(10 FF),0x10,0xFF,0x12,  ,Physical
-TC_ID-005 , Incorrect message length(No sub function)(10),0x10,  ,0x13,  ,Physical
-TC_ID-007 , Hard reset,0x11,0x01,0x51,  ,Physical
-TC_ID-008 , Soft reset,0x11,0x03,0x51,  ,Physical
-TC_ID-009 , Sub function not supported(out ofrange)(11 08) ,0x11,0x08,0x12,  ,Physical
-TC_ID-010 , Incorrect message length(No sub function)(11),0x11,  ,0x13,  ,Physical
-PC_ID-001 , Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-014 , PreCondition: PC_ID-001  Testcase:EnableRxAndDisableTx Extended session(28 01) ,0x28,0x01,0x68,  ,Functional
-TC_ID-015 , PreCondition: PC_ID-001  Testcase:DisableRxAndEnableTx Extended session(28 02) ,0x28,0x02,0x68,  ,Functional
-TC_ID-016 , PreCondition: PC_ID-001  Testcase:DisableRxAndDisableTx Extended session(28 03) ,0x28,0x03,0x68,  ,Functional
-PC_ID-002 , Start Default session,0x10,0x01,0x50,  ,Physical
-TC_ID-021 , incorrect message length(No sub function) with Default session(85),0x85,  ,0x7F,  ,Physical
-TC_ID-022 , PreCondition: PC_ID-002  Testcase:DTC setting ON wrong Session(85 01),0x85,0x01,0x7F,  ,Physical
-TC_ID-023 , PreCondition: PC_ID-002  Testcase:DTC setting OFF wrong Session(85 02) ,0x85,0x02,0x7F,  ,Physical
-TC_ID-024 , PreCondition: PC_ID-002  Testcase:Service not supported in active session(Default)(85 01),0x85,0x01,0x7F,  ,Physical
-TC_ID-025 , PreCondition: PC_ID-002  Testcase:Invalid sub function(85 FF),0x85,0xFF,0x7F,  ,Physical
-PC_ID-003 , Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-027 , Incorrect message length(No sub function) with Extended session(85),0x85,  ,0x13,  ,Physical
-TC_ID-028 , PreCondition: PC_ID-003  Testcase:DTC setting ON  Pre-condition extended(85 01),0x85,0x01,0xC5,  ,Physical
-TC_ID-029 , PreCondition: PC_ID-003  Testcase:DTC setting OFF Pre-condition extended(85 02) ,0x85,0x02,0xC5,  ,Physical
-TC_ID-030 , PreCondition: PC_ID-003  Testcase:Sub function not supported(not valid sub function)(85 08) ,0x85,0x08,0x12,  ,Physical
-TC_ID-032 , PreCondition: PC_ID-003  Testcase: Invalid  sub function(85 0A) ,0x85,0x0A,0x12,  ,Physical
-TC_ID-034 , PreCondition: PC_ID-003  Testcase:Read DTC with Extended session(19 01) ,0x19,0x01,0x59,  ,Physical
-TC_ID-035 , PreCondition: PC_ID-003  Testcase:Read DTC Extended session(19 02) ,0x19,0x02,0x59,  ,Physical
-TC_ID-037 , PreCondition: PC_ID-003  Testcase:Subfunction not supported(No Mask)(19 0F),0x19,0x0F,0x12,  ,Physical
-TC_ID-038 , PreCondition: PC_ID-003  Testcase:Subfunction not supported(19 0E),0x19,0x0E,0x12,  ,Physical
-TC_ID-039 , PreCondition: PC_ID-003  Testcase:Subfunction not supported(properMask improper record with 0xFF)(19 FF),0x19,0xFF ,0x12,  ,Physical
-TC_ID-043 , PreCondition: PC_ID-003  Testcase:Fault memory clear Extended session(14 FFFFFF) ,0x14,0xFFFFFF,0x54,  ,Physical
-TC_ID-044 , PreCondition: PC_ID-003  Testcase:Conditions not correct(invalid range)(14 FFEEEE) ,0x14,0xFFEEEE,0x22,  ,Physical
-TC_ID-045 , PreCondition: PC_ID-003  Testcase:Request out of range(Empty Group of DTC))(14),0x14,  ,0x13,  ,Physical
-PC_ID-004 , Start default session,0x10,0x01,0x50,  ,Physical
-TC_ID-046 , PreCondition: PC_ID-004  Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,0x62,  ,Physical
-TC_ID-047 , PreCondition: PC_ID-004  Testcase:B_CAN_Database_Version_F1_00_Read(Defaultsession),0x22,0xF100,0x62,  ,Physical
-TC_ID-048 , PreCondition: PC_ID-004  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
-TC_ID-049 , PreCondition: PC_ID-004  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,  ,Physical
-TC_ID-050 , PreCondition: PC_ID-004  Testcase:ECU_Serial_Number_F1_8C_Read(Defaultsession),0x22,0xF18C,0x62,  ,Physical
-TC_ID-051 , PreCondition: PC_ID-004  Testcase:Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Defaultsession),0x22,0xF191,0x62,  ,Physical
-TC_ID-052 , PreCondition: PC_ID-004  Testcase:HardwareVersionNumber_F1_93_Read(Defaultsession),0x22,0xF193,0x62,  ,Physical
-TC_ID-053 , PreCondition: PC_ID-004  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,0x62,  ,Physical
-TC_ID-054 , PreCondition: PC_ID-004  Testcase:SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
-TC_ID-055 , PreCondition: PC_ID-004  Testcase:Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
-TC_ID-056 , PreCondition: PC_ID-004  Testcase:ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
-TC_ID-057 , PreCondition: PC_ID-004  Testcase:ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
-TC_ID-058 , PreCondition: PC_ID-004  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,0x62,  ,Physical
-TC_ID-059 , PreCondition: PC_ID-004  Testcase:S_W_Version_Dataidentifier_F1_DD_Read(Defaultsession),0x22,0xF1DD,0x62,  ,Physical
-TC_ID-060 , PreCondition: PC_ID-004  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
-PC_ID-005 , Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-061 , PreCondition: PC_ID-005  Testcase:RX_SWIN_F1_EF_Read(Extended session),0x22,0xF1EF,0x62,  ,Physical
-TC_ID-062 , PreCondition: PC_ID-005  Testcase:B_CAN_Database_Version_F1_00_Read(Extendedsession),0x22,0xF100,0x62,  ,Physical
-TC_ID-063 , PreCondition: PC_ID-005  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Extendedsession),0x22,0xF187,0x62,  ,Physical
-TC_ID-064 , PreCondition: PC_ID-005  Testcase:Manufacturing_F1_8B_Read(Extendedsession),0x22,0xF18B,0x62,  ,Physical
-TC_ID-065 , PreCondition: PC_ID-005  Testcase:ECU_Serial_Number_F1_8C_Read(Extendedsession),0x22,0xF18C,0x62,  ,Physical
-TC_ID-066 , PreCondition: PC_ID-005  Testcase:Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Extendedsession),0x22,0xF191,0x62,  ,Physical
-TC_ID-067 , PreCondition: PC_ID-005  Testcase:HardwareVersionNumber_F1_93_Read(Extendedsession),0x22,0xF193,0x62,  ,Physical
-TC_ID-068 , PreCondition: PC_ID-005  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Extendedsession),0x22,0xF1C1,0x62,  ,Physical
-TC_ID-069 , PreCondition: PC_ID-005  Testcase:SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Extendedsession),0x22,0xF195,0x62,  ,Physical
-TC_ID-070 , PreCondition: PC_ID-005  Testcase:Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Extendedsession),0x22,0xF1A0,0x62,  ,Physical
-TC_ID-071 , PreCondition: PC_ID-005  Testcase:ECU_Supplier_Code_F1_A1_Read(Extendedsession),0x22,0xF1A1,0x62,  ,Physical
-TC_ID-072 , PreCondition: PC_ID-005  Testcase:ECU_Software_UNIT_number_F1_B0_Read(Extendedsession),0x22,0xF1B0,0x62,  ,Physical
-TC_ID-073 , PreCondition: PC_ID-005  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Extendedsession),0x22,0xF1B1,0x62,  ,Physical
-TC_ID-074 , PreCondition: PC_ID-005  Testcase:S_W_Version_Dataidentifier_F1_DD_Read(Extendedsession),0x22,0xF1DD,0x62,  ,Physical
-TC_ID-075 , PreCondition: PC_ID-005  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Extendedsession),0x22,0xF197,0x62,  ,Physical
-TC_ID-076 , Request out of range(invalid identifier))(22 F1FF),0x22,0xF1FF,0x31,  ,Physical
-TC_ID-080 , Incorrect message length(22),0x22,  ,0x13,  ,Physical
-PC_ID-006 , Start default session,0x10,0x01,0x50,  ,Physical
-TC_ID-081 , PreCondition: PC_ID-006  Testcase:Tester present(3E 00),0x3E,0x00,0x7E,  ,Physical
-TC_ID-082 , PreCondition: PC_ID-006  Testcase:Sub function not supported(with wrong sub function)(3E FF),0x3E,0xFF,0x12,  ,Physical
-PC_ID-007 , Start Extended session,0x10,0x03,0x50,  ,Physical
-TC_ID-083 , PreCondition: PC_ID-007  Tester present(3E 00),0x3E,0x00,0x7E,  ,Physical
-TC_ID-084 , PreCondition: PC_ID-007  Sub function not supported(with wrong sub function)(3E FF),0x3E,0xFF,0x12,  ,Physical
+PC_ID-001 , PreCondition: PC_ID-001  Testcase: Start Default session,0x10,0x01,0x50,  ,Physical
+TC_ID-001 , PreCondition: PC_ID-001  Testcase:  Start Default session,0x10,0x01,0x50,  ,Physical
+TC_ID-002 , PreCondition: PC_ID-001  Testcase:  Start Extended session,0x10,0x03,0x50,  ,Physical
+TC_ID-003 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in past,0x19,0x02  0x08,0x59,nan,Physical
+TC_ID-004 , PreCondition: PC_ID-001  Testcase: Start reportRead DTCByStatusMask in present,0x19,0x02  0x01,0x59,nan,Physical
+TC_ID-005 , PreCondition: PC_ID-001  Testcase:  Start reportNumberofDTCByStatusMask in past,0x19,0x01  0x08,0x59,nan,Physical
+TC_ID-006 , PreCondition: PC_ID-001  Testcase:   Start reportNumberofDTCByStatusMask in present,0x19,0x01  0x01,0x59,nan,Physical
+TC_ID-007 , PreCondition: PC_ID-001  Testcase:  Start Report Supported DTC,0x19,0x0A,0x59,nan,Physical
+TC_ID-008 , PreCondition: PC_ID-001  Testcase: Hard reset,0x11,0x01,0x51,  ,Physical
+TC_ID-009 , PreCondition: PC_ID-001  Testcase: Soft reset,0x11,0x03,0x51,  ,Physical
+TC_ID-010 , PreCondition: PC_ID-001  Testcase:  Start Communication Control,0x28,0x01 0x01,0x7F,nan,Physical
+TC_ID-011 , PreCondition: PC_ID-001  Testcase:  Clear DTC Service All Group,0x14,0xFFFFFF,0x54,  ,Physical
+TC_ID-012 , PreCondition: PC_ID-001  Testcase: Clear DTC Service Body Group,0x14,0x8000FF,0x54,  ,Physical
+TC_ID-013 , PreCondition: PC_ID-001  Testcase: DTC Setting On,0x85,0x02,0x7F,nan,Physical
+TC_ID-014 , PreCondition: PC_ID-001  Testcase:  ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,0x62,  ,Physical
+TC_ID-015 , PreCondition: PC_ID-001  Testcase:  Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,  ,Physical
+TC_ID-016 , PreCondition: PC_ID-001  Testcase:  Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
+TC_ID-017 , PreCondition: PC_ID-001  Testcase:  SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
+TC_ID-018 , PreCondition: PC_ID-001  Testcase:  ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
+TC_ID-019 , PreCondition: PC_ID-001  Testcase:  Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
+TC_ID-020 , PreCondition: PC_ID-001  Testcase:  SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
+TC_ID-021 , PreCondition: PC_ID-001  Testcase:  ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
+TC_ID-022 , PreCondition: PC_ID-001  Testcase:  ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,0x62,  ,Physical
+TC_ID-023 , PreCondition: PC_ID-001  Testcase:  Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Defaultsession),0x22,0xF191,0x62,  ,Physical
+TC_ID-024 , PreCondition: PC_ID-001  Testcase:  HardwareVersionNumber_F1_93_Read(Defaultsession),0x22,0xF193,0x62,  ,Physical
+TC_ID-025 , PreCondition: PC_ID-001  Testcase:  RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,0x62,  ,Physical
+TC_ID-026 , PreCondition: PC_ID-001  Testcase:  ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,0x62,  ,Physical
+TC_ID-027 , PreCondition: PC_ID-001  Testcase:  InCorrectMessage Length,0x22,0xF18B02,0x13,nan,Physical
+TC_ID-028 , PreCondition: PC_ID-001  Testcase:  InCorrectMessage Length       ,0x22,0xF18701,0x13,nan,Physical
+TC_ID-029 , PreCondition: PC_ID-001  Testcase:  Request out of range,0x22,0xF19F,0x31,nan,Physical
+TC_ID-030 , PreCondition: PC_ID-001  Testcase:  Request out of range,0x22,0xF1A001,0x31,nan,Physical
+TC_ID-031 , PreCondition: PC_ID-001  Testcase:  InCorrectMessage Length   ,0x22,0xF1B001,0x13,nan,Physical
+TC_ID-032 , PreCondition: PC_ID-001  Testcase:  InCorrectMessage Length,0x22,0xF1EF02,0x13,nan,Physical
+TC_ID-033 , Sub function not supported(10 07),0x10,0x07,0x12,  ,Physical
+TC_ID-034 , Incorrect message length(No sub function)(10),0x10,  ,0x13,  ,Physical
+TC_ID-035 , Incorrect message length(10 01 01 ),0x10,0x01 0x01,0x13,  ,Physical
+TC_ID-036 , Sub function not supported(11 0A) ,0x11,0x0A,0x12,  ,Physical
+TC_ID-037 , Incorrect message length,0x11,0x01 0x01,0x13,  ,Physical
+TC_ID-038 , Incorrect message length,0x14,0xFFFFFFFF,0x13,nan,Physical
+TC_ID-039 , Conditions not Correct,0x14,0xFFFFF1,0x22,nan,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
+TC_ID-040 , PreCondition: PC_ID-002  Testcase:  Start Default session,0x10,0x01,0x50,  ,Physical
+TC_ID-041 , PreCondition: PC_ID-002  Testcase: Start Extended session,0x10,0x03,0x50,  ,Physical
+TC_ID-042 , PreCondition: PC_ID-002  Testcase: Start reportRead DTCByStatusMask in past,0x19,0x02  0x08,0x59,nan,Physical
+TC_ID-043 , PreCondition: PC_ID-002  Testcase:  Start reportRead DTCByStatusMask in present,0x19,0x02  0x01,0x59,nan,Physical
+TC_ID-044 , PreCondition: PC_ID-002  Testcase:  Start reportNumberofDTCByStatusMask in past,0x19,0x01  0x08,0x59,nan,Physical
+TC_ID-045 , PreCondition: PC_ID-002  Testcase: Start reportNumberofDTCByStatusMask in present,0x19,0x01  0x01,0x59,nan,Physical
+TC_ID-046 , PreCondition: PC_ID-002  Testcase:   Start Report Supported DTC,0x19,0x0A,0x59,nan,Physical
+TC_ID-047 , PreCondition: PC_ID-002  Testcase:  Start Hard reset,0x11,0x01,0x51,  ,Physical
+TC_ID-048 , PreCondition: PC_ID-002  Testcase:  Start Soft reset,0x11,0x03,0x51,  ,Physical
+TC_ID-049 , PreCondition:  PC_ID-002    Testcase:   Start Enable Rx & Tx in norml communication message,0x28,0x00 0x01,0x68,nan,Physical
+TC_ID-050 , PreCondition:  PC_ID-002    Testcase:   Start Enable Rx & Tx in Network management communication message,0x28,0x00 0x02,0x68,nan,Physical
+TC_ID-051 , PreCondition:  PC_ID-002    Testcase:   Start Enable Rx & Tx in network management communication message and norml communication message,0x28,0x00 0x03,0x68,nan,Physical
+TC_ID-052 , PreCondition:  PC_ID-002    Testcase:   StartEnable Rx and Disable Tx in norml communication message,0x28,0x01 0x01,0x68,nan,Physical
+TC_ID-053 , PreCondition:  PC_ID-002    Testcase:   StartEnable Rx and Disable Tx in Network management communication message,0x28,0x01 0x02,0x68,nan,Physical
+TC_ID-054 , PreCondition:  PC_ID-002    Testcase:   Start Enable Rx and Disable Tx in network management communication message and norml communication message,0x28,0x01 0x03,0x68,nan,Physical
+TC_ID-055 , PreCondition:  PC_ID-002    Testcase:   StartDisable Rx and Enable Tx in norml communication message,0x28,0x02 0x01,0x68,nan,Physical
+TC_ID-056 , PreCondition:  PC_ID-002    Testcase:   StartDisable Rx and Enable Tx in Network management communication message,0x28,0x02 0x02,0x68,nan,Physical
+TC_ID-057 , PreCondition:  PC_ID-002    Testcase:   StartDisable Rx and Enable Tx in network management communication message and norml communication message,0x28,0x02 0x03,0x68,nan,Physical
+TC_ID-058 , PreCondition:  PC_ID-002    Testcase:   StartDisable Rx and Disable Tx in norml communication message,0x28,0x03 0x01,0x68,nan,Physical
+TC_ID-059 , PreCondition:  PC_ID-002    Testcase:   Start Disable Rx and Disable Tx in Network management communication message,0x28,0x03 0x02,0x68,nan,Physical
+TC_ID-060 , PreCondition:  PC_ID-002    Testcase:    Start Disable Rx and Disable Tx in network management communication message and norml communication message,0x28,0x03 0x03,0x68,nan,Physical
+TC_ID-061 , PreCondition:  PC_ID-002    Testcase:   SubFunction Not supported (28 FF 01),0x28,0xFF 0x01,0x12,nan,Physical
+TC_ID-062 , PreCondition:  PC_ID-002    Testcase:    Incorrect Message length(28 01 01 05),0x28,0x01 0x01  0x05,0x13,nan,Physical
+TC_ID-063 , PreCondition:  PC_ID-002    Testcase:   Request out of range(28 01 01 05),0x28,0x01 0x05,0x31,nan,Physical
+TC_ID-064 , PreCondition:  PC_ID-002 Testcase:  Clear DTC Service All Group,0x14,0xFFFFFF,0x54,  ,Physical
+TC_ID-065 , PreCondition:  PC_ID-002 Testcase:  Clear DTC Service Body Group,0x14,0x8000FF,0x54,  ,Physical
+TC_ID-066 , PreCondition:  PC_ID-002 Testcase: DTC setting ON  ,0x85,0x01,0xC5,  ,Physical
+TC_ID-067 , PreCondition:  PC_ID-002  Testcase:   DTC setting OFF ,0x85,0x02,0xC5,  ,Physical
+TC_ID-068 , PreCondition:  PC_ID-002 Testcase:   SubFunction Not Supported,0x85,0x04,0x12,nan,Physical
+TC_ID-069 , PreCondition: PC_ID-002  Testcase: InCorrectMessageLength,0x85,0x01 0x01,0x13,nan,Physical
+TC_ID-070 , Incorrect Message length,0x22,0xF18C01,0x13,nan,Physical
+TC_ID-071 , Request Out of range,0x22,0xF18F,0x31,nan,Physical
+TC_ID-072 , Incorrect Message length,0x22,0xF19703,0x13,nan,Physical
+TC_ID-073 , Incorrect Message length,0x22,0xF1A101,0x13,nan,Physical
+TC_ID-074 , Request Out of range,0x22,0xF1AF,0x31,nan,Physical
+TC_ID-075 , Incorrect Message length,0x22,0xF19504,0x13,nan,Physical
+TC_ID-076 , Incorrect Message length,0x22,0xF1 B0 01,0x13,nan,Physical
+TC_ID-077 , Incorrect Message length,0x22,0xF1 B1 04,0x13,nan,Physical
+TC_ID-078 , Incorrect Message length,0x22,0xF1 91 01,0x13,nan,Physical
+TC_ID-079 , Incorrect Message length,0x22,0xF1 93 01,0x13,nan,Physical
+TC_ID-080 , Request Out of range,0x22,0xF1EE,0x31,nan,Physical
+TC_ID-081 , Incorrect Message length,0x22,0x F1 C1 01,0x13,nan,Physical
+TC_ID-082 , Request Out of range,0x22,0x F1 C2,0x31,nan,Physical
+TC_ID-083 , PreCondition: PC_ID-002  Testcase: ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,0x62,  ,Physical
+TC_ID-084 , Start Extended session,0x10,0x03,0x50,nan,Physical
+TC_ID-085 , PreCondition: PC_ID-005  Testcase: ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,0x62,  ,Physical
+TC_ID-086 , PreCondition: PC_ID-005  Testcase:  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-087 , PreCondition: PC_ID-005  Testcase:  Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,nan,Physical
+TC_ID-088 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-089 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
+TC_ID-090 , PreCondition: PC_ID-005  Testcase: SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-091 , PreCondition: PC_ID-005  Testcase:  SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
+TC_ID-092 , PreCondition: PC_ID-005  Testcase:  ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-093 , PreCondition: PC_ID-005  Testcase: ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
+TC_ID-094 , PreCondition: PC_ID-005  Testcase:  Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-095 , PreCondition: PC_ID-005  Testcase:  Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
+TC_ID-096 , PreCondition: PC_ID-005  Testcase:  SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-097 , PreCondition: PC_ID-005  Testcase:  SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
+TC_ID-098 , PreCondition: PC_ID-005  Testcase: ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-099 , PreCondition: PC_ID-005  Testcase:  ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
+TC_ID-100 , PreCondition: PC_ID-005  Testcase:  ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-101 , PreCondition: PC_ID-005  Testcase: ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,0x62,  ,Physical
+TC_ID-102 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Defaultsession),0x22,0xF191,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-103 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Defaultsession),0x22,0xF191,0x62,  ,Physical
+TC_ID-104 , PreCondition: PC_ID-005  Testcase:  HardwareVersionNumber_F1_93_Read(Defaultsession),0x22,0xF193,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-105 , PreCondition: PC_ID-005  Testcase:  HardwareVersionNumber_F1_93_Read(Defaultsession),0x22,0xF193,0x62,  ,Physical
+TC_ID-106 , PreCondition: PC_ID-005  Testcase:  RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-107 , PreCondition: PC_ID-005  Testcase: RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,0x62,  ,Physical
+TC_ID-108 , PreCondition: PC_ID-005  Testcase: ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,0x62,  ,Physical
+PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
+TC_ID-109 , PreCondition: PC_ID-005  Testcase: ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,0x62,  ,Physical
+PC_ID-003 , Start Programming  session,0x10,0x02,0x50,  ,Physical
+TC_ID-110 , PreCondition: PC_ID-003  Testcase: Start Default session,0x10,0x01,0x50,  ,Physical
+TC_ID-111 , PreCondition: PC_ID-003  Testcase:  Start Extended session,0x10,0x03,0x50,  ,Physical
+TC_ID-112 , PreCondition: PC_ID-003  Testcase:  Start Extended session,0x10,0x03,0x50,nan,Physical
+TC_ID-113 , PreCondition: PC_ID-003  Testcase:  Start reportRead DTCByStatusMask in past,0x19,0x02  0x08,0x59,nan,Physical
+TC_ID-114 , PreCondition: PC_ID-003  Testcase: Start reportRead DTCByStatusMask in present,0x19,0x02  0x01,0x59,nan,Physical
+TC_ID-115 , PreCondition: PC_ID-003  Testcase: Start reportNumberofDTCByStatusMask in past,0x19,0x01  0x08,0x59,nan,Physical
+TC_ID-116 , PreCondition: PC_ID-003  Testcase: Start reportNumberofDTCByStatusMask in present,0x19,0x01  0x01,0x59,nan,Physical
+TC_ID-117 , PreCondition: PC_ID-003  Testcase:  Start Report Supported DTC,0x19,0x0A,0x59,nan,Physical
+TC_ID-118 , PreCondition: PC_ID-003  Testcase: Hard reset,0x11,0x01,0x51,  ,Physical
+TC_ID-119 , PreCondition: PC_ID-003  Testcase: Soft reset,0x11,0x03,0x51,  ,Physical
+TC_ID-120 , PreCondition: PC_ID-003   Testcase:  Start Enable Rx & Tx in norml communication message,0x28,0x00 0x01,0x68,nan,Physical
+TC_ID-121 , PreCondition: PC_ID-003  Testcase:  Start Enable Rx & Tx in Network management communication message,0x28,0x00 0x02,0x68,nan,Physical
+TC_ID-122 , PreCondition: PC_ID-003   Testcase:  Start Enable Rx & Tx in network management communication message and norml communication message,0x28,0x00 0x03,0x68,nan,Physical
+TC_ID-123 , PreCondition: PC_ID-003   Testcase:  StartEnable Rx and Disable Tx in norml communication message,0x28,0x01 0x01,0x68,nan,Physical
+TC_ID-124 , PreCondition: PC_ID-003   Testcase:  StartEnable Rx and Disable Tx in Network management communication message,0x28,0x01 0x02,0x68,nan,Physical
+TC_ID-125 , PreCondition: PC_ID-003   Testcase: Start Enable Rx and Disable Tx in network management communication message and norml communication message,0x28,0x01 0x03,0x68,nan,Physical
+TC_ID-126 , PreCondition: PC_ID-003   Testcase:  StartDisable Rx and Enable Tx in norml communication message,0x28,0x02 0x01,0x68,nan,Physical
+TC_ID-127 , PreCondition: PC_ID-003   Testcase: StartDisable Rx and Enable Tx in Network management communication message,0x28,0x02 0x02,0x68,nan,Physical
+TC_ID-128 , PreCondition: PC_ID-003   Testcase: StartDisable Rx and Enable Tx in network management communication message and norml communication message,0x28,0x02 0x03,0x68,nan,Physical
+TC_ID-129 , PreCondition: PC_ID-003   Testcase:  StartDisable Rx and Disable Tx in norml communication message,0x28,0x03 0x01,0x68,nan,Physical
+TC_ID-130 , PreCondition: PC_ID-003   Testcase:  Start Disable Rx and Disable Tx in Network management communication message,0x28,0x03 0x02,0x68,nan,Physical
+TC_ID-131 , PreCondition: PC_ID-003   Testcase:  Start Disable Rx and Disable Tx in network management communication message and norml communication message,0x28,0x03 0x03,0x68,nan,Physical
+TC_ID-132 , PreCondition: PC_ID-003  Testcase:  Clear DTC Service All Group,0x14,0xFFFFFF,0x54,  ,Physical
+TC_ID-133 , PreCondition: PC_ID-003  Testcase: Clear DTC Service Body Group,0x14,0x8000FF,0x54,  ,Physical
+TC_ID-134 , PreCondition: PC_ID-003  Testcase: DTC setting ON  ,0x85,0x01,0xC5,  ,Physical
+TC_ID-135 , PreCondition: PC_ID-003  Testcase:  DTC setting OFF ,0x85,0x02,0xC5,  ,Physical
+PC_ID-004 , Start DarkCurrent Mode,0x10,0xD0,0x50,nan,Physical
+TC_ID-136 ,  Start Sleep Mode Start,0x10,0xD1,0x50,nan,Physical
