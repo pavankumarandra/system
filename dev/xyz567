@@ -1,42 +1,44 @@
-generate_report(
-    asc_file_path,
-    txt_file_path,
-    output_html_file,
-    allowed_tx_ids,
-    allowed_rx_ids,
-    ecu_info_data,
-    target_ecu,
-    tester_name=tester_name   # ✅ Pass it here
-)
+class DiagnosticTester:
+    def __init__(self):
+        self.tester_name = ""
+        self.oled = None  # or actual OLED object
+class DiagnosticTester:
+    def __init__(self):
+        self.tester_name = ""
+        self.oled = None
+
+    def get_tester_name(self):
+        prev_name = None
+        if os.path.exists("tester_info.txt"):
+            with open("tester_info.txt", "r") as f:
+                prev_name = f.read().strip().replace("Tester:", "").strip()
+
+        while True:
+            prompt = f"Enter Tester Name [{prev_name}]: " if prev_name else "Enter Tester Name: "
+            name = input(prompt).strip()
+            if not name and prev_name:
+                name = prev_name
+            if name:
+                self.tester_name = name
+                logging.info(f"Tester: {self.tester_name}")
+                with open("tester_info.txt", "w") as f:
+                    f.write(f"Tester: {self.tester_name}\n")
+                if self.oled:
+                    self.oled.display_centered_text(f"Tester:\n{self.tester_name}")
+                    time.sleep(2)
+                break
+            else:
+                print("Name cannot be empty. Please try again.")
 
 
-def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_ids, allowed_rx_ids, ecu_info_data=None, target_ecu=None, tester_name=None):
 
 
-generate_html_report(
-    messages_by_tc,
-    report_path,
-    os.path.basename(asc_file_path),
-    start_ts,
-    end_ts,
-    ecu_info_data,
-    target_ecu,
-    base_datetime,
-    tester_name=tester_name   # ✅ Add this
-)
-
-
-def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, end_ts, ecu_info_data=None, target_ecu=None, base_datetime=None, tester_name=None):
+    def start(self):
+        self.get_tester_name()
+        self.load_config()
+        self.run_test()
+        ...
 
 
 
-{f"<p><strong>Tester Name:</strong> {escape(tester_name)}</p>" if tester_name else ""}
-
-
-<hr style="width: 300px;border:1px solid #999; margin:25px 0;">
-
-{f"<p><strong>Tester Name:</strong> {escape(tester_name)}</p>" if tester_name else ""}
-<p><strong>Generated:</strong> {generated_time}</p>
-<p><strong>CAN Log File:</strong> {asc_filename}</p>
-
-
+generate_html_report(..., tester_name=self.tester_name)
