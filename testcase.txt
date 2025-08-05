@@ -66,6 +66,7 @@ TC_ID-062 , PreCondition:  PC_ID-002    Testcase:    Incorrect Message length(28
 TC_ID-063 , PreCondition:  PC_ID-002    Testcase:   Request out of range(28 01 01 05),0x28,0x01 0x05,0x31,nan,Physical
 TC_ID-064 , PreCondition:  PC_ID-002 Testcase:  Clear DTC Service All Group,0x14,0xFFFFFF,0x54,  ,Physical
 TC_ID-065 , PreCondition:  PC_ID-002 Testcase:  Clear DTC Service Body Group,0x14,0x8000FF,0x54,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-066 , PreCondition:  PC_ID-002 Testcase: DTC setting ON  ,0x85,0x01,0xC5,  ,Physical
 TC_ID-067 , PreCondition:  PC_ID-002  Testcase:   DTC setting OFF ,0x85,0x02,0xC5,  ,Physical
 TC_ID-068 , PreCondition:  PC_ID-002 Testcase:   SubFunction Not Supported,0x85,0x04,0x12,nan,Physical
@@ -83,27 +84,35 @@ TC_ID-079 , Incorrect Message length,0x22,0xF1 93 01,0x13,nan,Physical
 TC_ID-080 , Request Out of range,0x22,0xF1EE,0x31,nan,Physical
 TC_ID-081 , Incorrect Message length,0x22,0x F1 C1 01,0x13,nan,Physical
 TC_ID-082 , Request Out of range,0x22,0x F1 C2,0x31,nan,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-083 , PreCondition: PC_ID-002  Testcase: ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,0x62,  ,Physical
-TC_ID-084 , Start Extended session,0x10,0x03,0x50,nan,Physical
+TC_ID-084 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-085 , PreCondition: PC_ID-005  Testcase: ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-086 , PreCondition: PC_ID-005  Testcase:  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-087 , PreCondition: PC_ID-005  Testcase:  Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,0x62,nan,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-088 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-089 , PreCondition: PC_ID-005  Testcase:  Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-090 , PreCondition: PC_ID-005  Testcase: SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-091 , PreCondition: PC_ID-005  Testcase:  SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-092 , PreCondition: PC_ID-005  Testcase:  ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-093 , PreCondition: PC_ID-005  Testcase: ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-094 , PreCondition: PC_ID-005  Testcase:  Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-095 , PreCondition: PC_ID-005  Testcase:  Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-096 , PreCondition: PC_ID-005  Testcase:  SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-097 , PreCondition: PC_ID-005  Testcase:  SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,0x62,  ,Physical
+PC_ID-002 , Start Extended session,0x10,0x03,0x50,  ,Physical
 TC_ID-098 , PreCondition: PC_ID-005  Testcase: ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
 PC_ID-005 , Start Default session,0x10,0x01,0x50,nan,Physical
 TC_ID-099 , PreCondition: PC_ID-005  Testcase:  ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,0x62,  ,Physical
