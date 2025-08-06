@@ -110,3 +110,29 @@ def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, en
         f.write(html)
 
     print(f"✅ UDS HTML Report generated at:\n{output_path}\n")
+
+
+
+def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_ids, allowed_rx_ids, ecu_info_data=None, target_ecu=None, tester_name=None):
+    global DESCRIPTION_MAP
+    DESCRIPTION_MAP = load_description_map(txt_file_path)
+    get_description.used_tc_ids = set()
+
+    messages_by_tc, start_ts, end_ts, base_datetime = parse_asc_file(
+        asc_file_path, allowed_tx_ids, allowed_rx_ids
+    )
+
+    report_path = output_html_file
+
+    generate_html_report(
+        messages_by_tc,
+        report_path,
+        os.path.basename(asc_file_path),
+        start_ts,
+        end_ts,
+        ecu_info_data,
+        target_ecu,
+        base_datetime,
+        tester_name  # ✅ Passed to HTML report
+    )
+
