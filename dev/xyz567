@@ -136,3 +136,30 @@ def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_i
         tester_name  # ✅ Passed to HTML report
     )
 
+
+<h1 style="text-align: center;">UDS Diagnostic Report</h1>
+
+<div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 40px; margin-top: 20px; padding-left: 10px;">
+    <div style="width: 650px;">
+    
+        <p><strong>Target ECU:</strong> MKBD</p>
+        <p><strong>S/W Version:</strong> 01.00.01</p><p><strong>B-CAN Version:</strong> 25 02 01</p><p><strong>Manufacturing Date:</strong> 00 00 00 00</p><p><strong>ECU_Serial Number:</strong> 0000000031</p><p><strong>H/W Version:</strong> 01.00</p>
+        
+        <hr style="width: 300px;border:1px solid #999; margin:25px 0;">
+        
+        <p><strong>Generated:</strong> 2025-08-06 11:34:31</p>
+        <p><strong>Tester Name:</strong> N/A</p>
+        <p><strong>CAN Log File:</strong> CANLog_Testcase_20250806_113410.asc</p>
+        <p><strong>Total Test Cases:</strong> 77</p>
+        <p class="pass"><strong>Passed:</strong> 77</p>
+        <p class="fail"><strong>Failed:</strong> 0</p>
+        <p><strong>Start_Time:</strong> 2025-08-06 11:34:11.085</p>
+        <p><strong>End_Time:</strong> 2025-08-06 11:34:26.477</p>
+        <p><strong>Test Duration:</strong> 15.393 seconds</p>
+        
+    </div>
+    <button onclick="document.querySelectorAll('.case-block').forEach(el => el.style.display='');">Show All</button>
+    <div id="chart-container" style="width: 320px; margin-left:70px;">
+        <canvas id="passFailChart" width="300" height="300"></canvas>
+    </div>
+</div>
