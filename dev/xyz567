@@ -1,11 +1,38 @@
-generate_html_report(
-    messages_by_tc,
-    output_path,
-    asc_filename,
-    start_ts,
-    end_ts,
-    tester_name=self.tester_name,  # ✅ Pass it from your app
-    ecu_info_data=self.ecu_info_data,
-    target_ecu=self.target_ecu,
-    base_datetime=self.base_datetime
-)
+class UDSApp:
+    def __init__(self):
+        self.client = UDSClient()
+        self.oled = None
+        self.tester_name = None
+        try:
+            self.oled = oled_display.OLED()
+            logging.info("OLED initialized successfully.")
+        except Exception as e:
+            logging.warning(f"OLED initialization failed: {e}")
+        self.test_cases = self.load_test_cases()
+
+    def get_tester_name(self):
+        prev_name = None
+        if os.path.exists("tester_info.txt"):
+            with open("tester_info.txt", "r") as f:
+                prev_name = f.read().strip().replace("Tester:", "").strip()
+
+        while True:
+            prompt = f"Enter Tester Name [{prev_name}]: " if prev_name else "Enter Tester Name: "
+            name = input(prompt).strip()
+            if not name and prev_name:
+                name = prev_name
+            if name:
+                self.tester_name = name
+                logging.info(f"Tester: {self.tester_name}")
+                with open("tester_info.txt", "w") as f:
+                    f.write(f"Tester: {self.tester_name}\n")
+                if self.oled:
+                    self.oled.display_centered_text(f"Tester:\n{self.tester_name}")
+                    time.sleep(2)
+                break
+            else:
+                print("Name cannot be empty. Please try again.")
+
+    def start(self):
+        self.get_tester_name()
+        self.main_menu()  # make sure main_menu uses tester_name if needed
