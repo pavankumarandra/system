@@ -40,16 +40,23 @@ class UDSApp:
         
         
         
+2025-08-06 09:59:39,792 [WARNING] OLED initialization failed: module 'drivers.oled_display' has no attribute 'OLED'
 Traceback (most recent call last):
-  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 9, in <module>
-    from drivers import oled_display, button_input, config_loader, uds_client, transfer_file
-  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/drivers/uds_client.py", line 15, in <module>
-    from drivers.report_generator import generate_report 
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/drivers/report_generator.py", line 427, in <module>
-    def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, end_ts, ecu_info_data=None, target_ecu=None, base_datetime=None, tester_name=self.tester_name):
-                                                                                                                                                               ^^^^
-NameError: name 'self' is not defined
+  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 276, in <module>
+    main()
+  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 272, in main
+    app = UDSApp()
+          ^^^^^^^^
+  File "/home/mobase/1_1_MKBD_AY_EV/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 36, in __init__
+    self.test_cases = self.load_test_cases()
+                      ^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'UDSApp' object has no attribute 'load_test_cases'
+
+
+------------------
+(program exited with code: 1)
+Press return to continue
+
 
 
 
