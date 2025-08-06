@@ -203,3 +203,21 @@ def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, en
         target_ecu,
         base_datetime
     )
+
+
+
+
+Log file found: /home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/output/can_logs/CANLog_Testcase_20250806_145754.asc
+Traceback (most recent call last):
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 236, in <module>
+    main()
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 233, in main
+    app.main_menu()
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 166, in main_menu
+    self.uds.run_testcase(self.oled)	
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/drivers/uds_client.py", line 790, in run_testcase
+    generate_report(
+TypeError: generate_report() got an unexpected keyword argument 'asc_file_path'
+
+
