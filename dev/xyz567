@@ -560,3 +560,5 @@ def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_i
         base_datetime,
         tester_name  # ✅ Passed to HTML report
     )
+
+<p><strong>Tester Name:</strong> {escape(tester_name) if tester_name else "N/A"}</p>
