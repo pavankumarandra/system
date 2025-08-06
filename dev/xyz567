@@ -1,44 +1,32 @@
-def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, end_ts, ecu_info_data=None, target_ecu=None, base_datetime=None, user_name=None):
+class UDSApp:
+    def __init__(self, user_name=None):
+        self.user_name = user_name  # ✅ Store the user name
+        ...
 
 
-{f"<p><strong>User:</strong> {escape(user_name)}</p>" if user_name else ""}
+def main():
+    user_name = input("Enter your name: ").strip()
+    app = UDSApp(user_name=user_name)
+    app.main_menu()
 
 
-
-<p><strong>Generated:</strong> {generated_time}</p>
-{f"<p><strong>User:</strong> {escape(user_name)}</p>" if user_name else ""}
-<p><strong>CAN Log File:</strong> {asc_filename}</p>
-
-
-
-def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_ids, allowed_rx_ids, ecu_info_data=None, target_ecu=None, user_name=None):
-
-
-
-generate_html_report(
-    messages_by_tc,
-    report_path,
-    os.path.basename(asc_file_path),
-    start_ts,
-    end_ts,
-    ecu_info_data,
-    target_ecu,
-    base_datetime,
-    user_name=user_name
-)
-
-
-
-
-
-user_name = input("Enter your name: ")
 generate_report(
     asc_file_path,
     txt_file_path,
     output_html_file,
     allowed_tx_ids,
     allowed_rx_ids,
-    ecu_info_data=ecu_info_data,
-    target_ecu=target_ecu,
-    user_name=user_name
+    ecu_info_data=...,
+    target_ecu=...,
+    user_name=self.config.get("user_name")  # OR use self.user_name if passed
 )
+
+
+self.uds = uds_client.UDSClient(self.config, user_name=self.user_name)
+
+
+
+class UDSClient:
+    def __init__(self, config, user_name=None):
+        self.config = config
+        self.user_name = user_name
