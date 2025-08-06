@@ -1,116 +1,15 @@
-import sys
-import os
-import time
-import logging
-import subprocess
-import RPi.GPIO as GPIO
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from drivers import oled_display, button_input, config_loader, uds_client, transfer_file
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
-
 class UDSApp:
     def __init__(self):
+        self.user_name = input("Enter your name: ").strip()  # ✅ Ask for name
+        logging.info(f"Tester Name: {self.user_name}")       # ✅ Log the name
+        
         self.config = None
         self.oled = None
-        self.button = None
-        self.uds_client = None
-        self.execution_count = 0
-        self.max_executions = None
-        self.test_cases = self.load_test_cases()  # Fixed: method now exists
-
-    def load_test_cases(self):
-        """
-        Placeholder for loading test cases.
-        You can implement this to load from a file in the future.
-        """
-        logging.info("Loading test cases (placeholder).")
-        return []
-
-    def initialize_dependencies(self):
-        try:
-            self.config = config_loader.load_config()
-            logging.info("Configuration loaded successfully.")
-        except Exception as e:
-            logging.error(f"Failed to load configuration: {e}")
-            return False
-
-        try:
-            self.oled = oled_display.OLEDDisplay(self.config["display"])  # Fixed class name
-            self.oled.initialize()
-            logging.info("OLED display initialized.")
-        except Exception as e:
-            logging.warning(f"OLED initialization failed: {e}")
-            self.oled = None
-
-        try:
-            self.button = button_input.ButtonInput(self.config["button"]["pin"])
-            self.button.initialize()
-            logging.info("Button initialized.")
-        except Exception as e:
-            logging.error(f"Button initialization failed: {e}")
-            return False
-
-        try:
-            self.uds_client = uds_client.UDSClient(self.config["uds"], self.oled)
-            logging.info("UDS client initialized.")
-        except Exception as e:
-            logging.error(f"UDS client initialization failed: {e}")
-            return False
-
-        self.max_executions = self.config.get("execution", {}).get("max_iterations", 1)
-        return True
-
-    def display_message(self, message):
-        if self.oled:
-            self.oled.display_message(message)
-
-    def run_test_cases(self):
-        self.display_message("Executing test cases...")
-        logging.info("Starting test case execution.")
-
-        try:
-            for i in range(self.max_executions):
-                self.execution_count += 1
-                logging.info(f"Execution {self.execution_count} of {self.max_executions}.")
-                self.uds_client.execute_test_cases()
-
-            self.display_message("Execution complete.")
-        except Exception as e:
-            logging.error(f"Error during test execution: {e}")
-            self.display_message("Execution error.")
-
-    def shutdown(self):
-        self.display_message("Shutting down...")
-        GPIO.cleanup()
-        logging.info("System shutdown. Cleaned up GPIO.")
-
-    def run(self):
-        if not self.initialize_dependencies():
-            self.display_message("Initialization failed")
-            return
-
-        self.display_message("System ready")
-        logging.info("System initialized. Waiting for button press.")
-
-        try:
-            while True:
-                if self.button.is_pressed():
-                    logging.info("Button pressed. Starting test execution.")
-                    self.run_test_cases()
-                    self.display_message("Press to re-run")
-
-                time.sleep(0.1)
-        except KeyboardInterrupt:
-            logging.info("Interrupted by user.")
-        finally:
-            self.shutdown()
-
-if __name__ == "__main__":
-    app = UDSApp()
-    app.run()
+        self.buttons = None
+        self.uds = None
+        self.usb = None
+        self.initialized_once=False
+        self.btn_map = {}
+        self.menu_combos = {}
+        self.file_transfer_combos = {}
+        self.initialize_dependencies()
