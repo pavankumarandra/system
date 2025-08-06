@@ -46,5 +46,18 @@ def generate_html_report(messages_by_tc, output_path, asc_filename, start_ts, en
 <p><strong>CAN Log File:</strong> {asc_filename}</p>
 
 
+Traceback (most recent call last):
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/application/main.py", line 9, in <module>
+    from drivers import oled_display, button_input, config_loader, uds_client, transfer_file
+  File "/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/drivers/uds_client.py", line 15, in <module>
+    from drivers.report_generator import generate_report 
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ImportError: cannot import name 'generate_report' from 'drivers.report_generator' (/home/mobase/User_input_1/Common_Diagnostics_RaspberryPi_R01_25'0708/input/drivers/report_generator.py)
+
+
+------------------
+(program exited with code: 1)
+Press return to continue
+
 
 
