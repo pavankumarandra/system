@@ -562,3 +562,29 @@ def generate_report(asc_file_path, txt_file_path, output_html_file, allowed_tx_i
     )
 
 <p><strong>Tester Name:</strong> {escape(tester_name) if tester_name else "N/A"}</p>
+
+
+
+
+
+
+# Ask for user name
+user_name = input("Enter your name: ")
+
+# Use the name later in the script
+print(f"Hello, {user_name}! Welcome to the UDS Diagnostic Tool.")
+
+
+
+def generate_html_report(tester_name, output_path):
+    with open(output_path, 'w') as f:
+        f.write(f"""<!DOCTYPE html>
+<html>
+<head><title>UDS Diagnostic Report</title></head>
+<body>
+    <h1>UDS Diagnostic Report</h1>
+    <p><strong>Tester Name:</strong> {tester_name}</p>
+    <!-- Add more content here -->
+</body>
+</html>
+""")
