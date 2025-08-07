@@ -115,6 +115,7 @@ TC_ID-099 , PreCondition: PC_ID-019  Testcase:reportRead DTCByStatusMask (19 02 
 TC_ID-100 , PreCondition: PC_ID-019  Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x0108,06 59 01 08 00 00 00 AA,  ,Physical,Hex
 TC_ID-101 , PreCondition: PC_ID-019  Testcase:reportNumberofDTCByStatusMask(19 01 01) ,0x19,0x0101,06 59 01 01 00 00 00 AA,  ,Physical,Hex
 TC_ID-102 , PreCondition: PC_ID-019 Testcase:Report Supported DTC(19 01 01) ,0x20,0x0A,06 59 0A 09 00 00 00 AA,nan,nan,nan
+PC_ID-020 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex
 PC_ID-004 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex
 TC_ID-103 , PreCondition: PC_ID-004  Testcase:ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Hex
 TC_ID-104 , PreCondition: PC_ID-004  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Hex
