@@ -18,7 +18,7 @@ TC_ID-010 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub fun
 TC_ID-011 , PreCondition: PC_ID-001 Testcase:Service not supported in active session,0x28,0x00,03 7F 11 7F AA AA AA AA,  ,Functional,Hex
 TC_ID-012 , PreCondition: PC_ID-001 Testcase:Fault memory clear Default session(14 FFFFFF) All group,0x14,0xFFFFFF,01 54 AA AA AA AA AA AA,  ,Physical,Hex
 TC_ID-013 , PreCondition: PC_ID-001  Testcase:Fault memory clear Default session(14 8000FF) Body group,0x14,0x8000FF,01 54 AA AA AA AA AA AA,  ,Physical,Hex
-TC_ID-014 , PreCondition: PC_ID-001  Testcase:Service not supported in active session,0x85,0x01,02 7F 85 7F AA AA AA AA,  ,Physical,Hex
+TC_ID-014 , PreCondition: PC_ID-001  Testcase:Service not supported in active session,0x85,0x01,03 7F 85 7F AA AA AA AA,  ,Physical,Hex
 TC_ID-015 , PreCondition: PC_ID-001  Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x01 0x08,06 59 01 08 00 00 00 AA,  ,Physical,Hex
 TC_ID-016 , PreCondition: PC_ID-001   Testcase:reportNumberofDTCByStatusMask(19 01 01) ,0x19,0x01 0x01,06 59 01 01 00 00 00 AA,  ,Physical,Hex
 TC_ID-017 , PreCondition: PC_ID-001   Testcase:Report Supported DTC(19 01 01) ,nan,0x0A,06 59 0A 09 00 00 00 AA,nan,nan,nan
@@ -71,12 +71,6 @@ TC_ID-062 , PreCondition: PC_ID-002  Testcase:Fault memory clear Default session
 TC_ID-063 , PreCondition: PC_ID-002  Testcase:Conditions not correct(invalid range)(14 FFEEEE) ,0x14,0xFFEEEE,03 7F 14 22 AA AA AA AA,  ,Physical,Hex
 TC_ID-064 , PreCondition: PC_ID-002  Testcase:Request out of range(Empty Group of DTC))(14),0x14,  ,03 7F 14 13 AA AA AA AA,  ,Physical,Hex
 TC_ID-065 , PreCondition: PC_ID-002   Testcase:Request out of range(Empty Group of DTC))(14),0x14,0xFFFFFFFFFF,03 7F 14 13 AA AA AA AA,  ,Physical,Hex
-TC_ID-066 , PreCondition: PC_ID-002   Testcase:DTC setting ON  Pre-condition extended(85 01),0x85,0x01,02 C5 01 AA AA AA AA AA,  ,Physical,Hex
-TC_ID-067 , PreCondition: PC_ID-002   Testcase:DTC setting OFF Pre-condition extended(85 02) ,0x85,0x02,02 C5 02 AA AA AA AA AA,  ,Physical,Hex
-TC_ID-068 , PreCondition: PC_ID-002   Testcase:Sub function not supported(not valid sub function)(85 08) ,0x85,0x08,03 7F 85 12 AA AA AA AA,  ,Physical,Hex
-TC_ID-069 , PreCondition: PC_ID-002   Testcase: Invalid  sub function(85 0A) ,0x85,0x0A,03 7F 85 12 AA AA AA AA,  ,Physical,Hex
-TC_ID-070 , PreCondition: PC_ID-002   Testcase:Incorrect message length(No sub function) with Extended session(85),0x85,  ,03 7F 85 13 AA AA AA AA,  ,Physical,Hex
-TC_ID-071 , PreCondition: PC_ID-002   Testcase:Incorrect message length(No sub function) with Extended session(85),0x85, 0x01 0x01,03 7F 85 13 AA AA AA AA,  ,Physical,Hex
 TC_ID-072 , PreCondition: PC_ID-002   Testcase:reportRead DTCByStatusMask (19 02 08) in past,0x19,0x02 0x08,03 59 02 08 AA AA AA AA,  ,Physical,Hex
 TC_ID-073 , PreCondition: PC_ID-002   Testcase:reportRead DTCByStatusMask (19 02 01) in Active,0x19,0x02 0x01,03 59 02 01 AA AA AA AA,  ,Physical,Hex
 TC_ID-074 , PreCondition: PC_ID-002   Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x01 0x08,06 59 01 08 00 00 00 AA,  ,Physical,Hex
@@ -110,8 +104,6 @@ TC_ID-100 , PreCondition: PC_ID-003   Testcase:DisableRxAndDisableTx Extended se
 TC_ID-101 , PreCondition: PC_ID-003   Testcase:DisableRxAndDisableTx Extended session(28 03 03) network management communication message and norml communication message,0x28,0x03 0x03,02 68 03 AA AA AA AA AA,  ,Functional,Hex
 TC_ID-102 , PreCondition: PC_ID-003  Testcase:Fault memory clear Default session(14 FFFFFF) All group,0x14,0xFFFFFF,01 54 AA AA AA AA AA AA,  ,Physical,Hex
 TC_ID-103 , PreCondition: PC_ID-003  Testcase:Fault memory clear Default session(14 8000FF) Body group,0x14,0x8000FF,01 54 AA AA AA AA AA AA,  ,Physical,Hex
-TC_ID-104 , PreCondition: PC_ID-003  Testcase:DTC setting ON  Pre-condition programming(85 01),0x85,0x01,02 C5 01 AA AA AA AA AA,  ,Physical,Hex
-TC_ID-105 , PreCondition: PC_ID-003  Testcase:DTC setting OFF Pre-condition programming(85 02) ,0x85,0x02,02 C5 02 AA AA AA AA AA,  ,Physical,Hex
 TC_ID-106 , PreCondition: PC_ID-003  Testcase:reportRead DTCByStatusMask (19 02 08) in past,0x19,0x02 0x08,03 59 02 08 AA AA AA AA,  ,Physical,Hex
 TC_ID-107 , PreCondition: PC_ID-003  Testcase:reportRead DTCByStatusMask (19 02 01) in Active,0x19,0x02 0x01,03 59 02 01 AA AA AA AA,  ,Physical,Hex
 TC_ID-108 , PreCondition: PC_ID-003  Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x01 0x08,06 59 01 08 00 00 00 AA,  ,Physical,Hex
@@ -151,3 +143,13 @@ PC_ID-011 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,
 TC_ID-134 , PreCondition: PC_ID-011  Testcase:HardwareVersionNumber_F1_93_Read(Extendedsession),0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex
 TC_ID-135 , PreCondition: PC_ID-011   Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,10 2B 62 F1 EF 07 16 0B 52 31 30 20 41 59 31 2F 31 2F 30 0C 52 31 35 35 20 41 59 31 2F 31 2F 30 0C 52 31 35 36 20 41 59 31 2F 31 2F 30 AA AA AA AA AA,  ,Physical,Hex
 TC_ID-136 , PreCondition: PC_ID-011  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,10 23 62 F1 C1 9F 27 A1 70 58 C0 0F 18 3B 64 D2 4C B6 6F 93 8D D5 1D FE 9D 05 67 39 C7 3A AF CE CC 78 EB 03 AF AA AA AA AA AA AA,  ,Physical,Hex
+PC_ID-012 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex
+TC_ID-066 , PreCondition: PC_ID-012   Testcase:DTC setting ON  Pre-condition extended(85 01),0x85,0x01,02 C5 01 AA AA AA AA AA,  ,Physical,Hex
+TC_ID-067 , PreCondition: PC_ID-002   Testcase:DTC setting OFF Pre-condition extended(85 02) ,0x85,0x02,02 C5 02 AA AA AA AA AA,  ,Physical,Hex
+TC_ID-068 , PreCondition: PC_ID-002   Testcase:Sub function not supported(not valid sub function)(85 08) ,0x85,0x08,03 7F 85 12 AA AA AA AA,  ,Physical,Hex
+TC_ID-069 , PreCondition: PC_ID-002   Testcase: Invalid  sub function(85 0A) ,0x85,0x0A,03 7F 85 12 AA AA AA AA,  ,Physical,Hex
+TC_ID-070 , PreCondition: PC_ID-002   Testcase:Incorrect message length(No sub function) with Extended session(85),0x85,  ,03 7F 85 13 AA AA AA AA,  ,Physical,Hex
+TC_ID-071 , PreCondition: PC_ID-002   Testcase:Incorrect message length(No sub function) with Extended session(85),0x85, 0x01 0x01,03 7F 85 13 AA AA AA AA,  ,Physical,Hex
+PC_ID-013 , Start Programming session,0x10,0x02,06 50 03 00 32 01 F4 AA,  ,Physical,Hex
+TC_ID-104 , PreCondition: PC_ID-013  Testcase:DTC setting ON  Pre-condition programming(85 01),0x85,0x01,02 C5 01 AA AA AA AA AA,  ,Physical,Hex
+TC_ID-105 , PreCondition: PC_ID-013  Testcase:DTC setting OFF Pre-condition programming(85 02) ,0x85,0x02,02 C5 02 AA AA AA AA AA,  ,Physical,Hex
