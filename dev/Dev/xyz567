@@ -509,47 +509,108 @@ class UDSClient:
 
                                         
                         elif service_int == 0x11:
-                              if subfunc != "":
-                                subfunc_int = int(subfunc, 16)
-                                raw_request = bytes([0x11, subfunc_int])
-                                time.sleep(0.05)
-                                if subfunc_int == 0x01:
-                                   client.conn.send(raw_request)
-                                   response = client.conn.wait_frame(timeout=2)
-                                   time.sleep(1)
+                            try:
+                                # Handle valid subfunction case (e.g., 0x01)
+                                if subfunc.strip():
+                                    # Support multi-byte subfunctions (e.g., "01 02")
+                                    subfunc_clean = subfunc.strip().replace(" ", "")
+                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
+                                        raise ValueError(f"Invalid hex in subfunction: {subfunc_clean}")
+                                    
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                    raw_request = bytearray([service_int]) + subfunc_bytes
+                                    
+                                # Handle empty subfunction case (invalid message)
                                 else:
-                                   client.conn.send(raw_request)
-                                   response = client.conn.wait_frame(timeout=2)
-                                                        
-                              elif subfunc == "":
-                                 
-                                       # service_int = int(service, 16)
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
-                                        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        time.sleep(0.05)
-                                        client.conn.send(raw_request)
-                                        response = client.conn.wait_frame(timeout=2)
+                                    subfunc_bytes = b''
+                                    raw_request = bytearray([service_int])
+
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                client.conn.send(raw_request)
+                                time.sleep(0.1)
+                                response = client.conn.wait_frame(timeout=2)
+
+                                # Evaluate response
+                                if response:
+                                    logging.info(f"{tc_id} - Received: {response.hex().upper()}")
+                                    expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                    if response[:len(expected_bytes)] == bytes(expected_bytes):
+                                        logging.info(f"{tc_id} - {step_desc} -> PASS")
+                                    else:
+                                        logging.warning(f"{tc_id} - {step_desc} -> FAIL - Mismatch response")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Hex Error: {ve}")
+                                oled.display_centered_text(f"{tc_id}\nHex Error")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
+                                oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+                            finally:
+                                oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
+                                time.sleep(2)
+
                                         
                             
-                        elif service_int == 0x22:
-                              if subfunc != "":   
-                                subfunc_int = int(subfunc, 16)    
-                                did_hi = (subfunc_int >> 8) & 0xFF
-                                did_lo = subfunc_int & 0xFF
-                                raw_request = bytes([0x22, did_hi, did_lo])
-                                #time.sleep(0.05)
+                        elif service_int == 0x22:  # ReadDataByIdentifier
+                            try:
+                                raw_request = bytearray([service_int])  # Start with the service byte
+
+                                if subfunc.strip():
+                                    # Clean subfunction: remove '0x' and spaces
+                                    subfunc_clean = subfunc.replace("0x", "").replace(" ", "").strip()
+
+                                    # Check for non-hex characters
+                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
+                                        raise ValueError(f"Invalid hex characters in subfunction: '{subfunc}'")
+
+                                    # Pad if odd length
+                                    if len(subfunc_clean) % 2 != 0:
+                                        subfunc_clean = "0" + subfunc_clean
+
+                                    # Convert to bytes and append
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                    raw_request += subfunc_bytes
+                                else:
+                                    # Subfunction is empty, only send the service byte
+                                    logging.warning(f"{tc_id} - Subfunction empty: Sending only service byte")
+
+                                # Send the request
+                                logging.info(f"{tc_id} - {step_desc}: Sending request {raw_request.hex().upper()}")
                                 client.conn.send(raw_request)
-                                response = wait_for_final_response(client, tc_id, step_desc)                       
-                              elif subfunc == "":                               
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                time.sleep(0.05)
+
+                                # Wait for full response (single or multi-frame)
+                                response = wait_for_final_response(client, tc_id, step_desc)
+
+                                if response:
+                                    response_hex = response.hex().upper()
+                                    logging.info(f"{tc_id} - Received: {response_hex}")
+
+                                    # Validate response if expected is provided
+                                    if expected:
                                         expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        #time.sleep(0.05)
-                                        client.conn.send(raw_request)
-                                        response = wait_for_final_response(client, tc_id, step_desc)
+                                        if response.startswith(bytes(expected_bytes)):
+                                            logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
+                                        else:
+                                            logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {bytes(expected_bytes).hex().upper()}")
+                                    else:
+                                        logging.info(f"{tc_id} - No expected response provided")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Subfunction hex error: {ve}")
+                                oled.display_centered_text(f"{tc_id}\nHex Error")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Unexpected Error: {type(e).__name__} - {str(e)}")
+                                oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+                            finally:
+                                oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
+                                time.sleep(2)
+
+
                                        
         
                         elif service_int == 0x2E:
@@ -566,44 +627,105 @@ class UDSClient:
         
                             
         
-                        elif service_int == 0x19:
-                              if subfunc != "":
-                                
-                                subfunc_int = int(subfunc, 16)
-                                status_mask = 0xFF
-                                raw_request = bytes([0x19, subfunc_int, status_mask])
+                        elif service_int == 0x19:  # ReadDTCInformation
+                            try:
+                                raw_request = bytearray([service_int])  # Start with service byte
+
+                                if subfunc.strip():
+                                    # Clean and normalize subfunction (remove 0x, spaces)
+                                    subfunc_clean = subfunc.replace("0x", "").replace(" ", "").strip()
+
+                                    # Validate hex string
+                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
+                                        raise ValueError(f"Invalid hex characters in subfunction: '{subfunc}'")
+
+                                    # Pad odd length (e.g., "201" -> "0201")
+                                    if len(subfunc_clean) % 2 != 0:
+                                        subfunc_clean = "0" + subfunc_clean
+
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                    raw_request += subfunc_bytes
+                                else:
+                                    # No subfunction – just the service byte (tests invalid format)
+                                    logging.warning(f"{tc_id} - Subfunction is empty: Sending only 0x19")
+
+                                # Log and send
+                                logging.info(f"{tc_id} - {step_desc}: Sending request {raw_request.hex().upper()}")
                                 client.conn.send(raw_request)
-                                response_data = client.conn.wait_frame(timeout=2)
-                                                        
-                              elif subfunc == "":
-                                 
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                time.sleep(0.05)
+
+                                # Wait for response (handle multi-frame if needed)
+                                response_data = wait_for_final_response(client, tc_id, step_desc)
+
+                                if response_data:
+                                    response_hex = response_data.hex().upper()
+                                    logging.info(f"{tc_id} - Received: {response_hex}")
+
+                                    # Compare response if expected provided
+                                    if expected:
                                         expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-                                        
-                                        client.conn.send(raw_request)
-                                        response_data = client.conn.wait_frame(timeout=2)
+                                        if response_data.startswith(bytes(expected_bytes)):
+                                            logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
+                                        else:
+                                            logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {bytes(expected_bytes).hex().upper()}")
+                                    else:
+                                        logging.info(f"{tc_id} - No expected result provided")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Subfunction hex error: {ve}")
+                                oled.display_centered_text(f"{tc_id}\nHex Error")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Unexpected Error: {type(e).__name__} - {str(e)}")
+                                oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+                            finally:
+                                oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
+                                time.sleep(2)
+
                                         
                         elif service_int == 0x14:  # ClearDiagnosticInformation
-                              if subfunc != "":  
-                                subfunc_int = int(subfunc, 16)
-                                dtc_group_bytes = [(subfunc_int >> shift) & 0xFF for shift in (16, 8, 0)]
-                                raw_request = bytes([0x14] + dtc_group_bytes)
+                            try:
+                                subfunc_clean = subfunc.strip().replace(" ", "")
+
+                                if subfunc_clean:
+                                    # Validate hex string length (should be exactly 6 hex digits i.e., 3 bytes)
+                                    if len(subfunc_clean) % 2 != 0:
+                                        subfunc_clean = "0" + subfunc_clean  # pad if odd-length hex string
+
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                    if len(subfunc_bytes) != 3:
+                                        logging.warning(f"{tc_id} - Invalid DTC group length: {len(subfunc_bytes)} bytes")
+                                else:
+                                    # Empty subfunc: just the service byte (e.g., "14")
+                                    subfunc_bytes = b''
+
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+
                                 client.conn.send(raw_request)
+                                time.sleep(0.05)
                                 response_data = client.conn.wait_frame(timeout=2)
-                              elif subfunc == "":
-                                
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+
+                                if response_data:
+                                    logging.info(f"{tc_id} - Received: {response_data.hex().upper()}")
+
+                                    if expected:
                                         expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-                                        
-                                        client.conn.send(raw_request)
-                                        response_data = client.conn.wait_frame(timeout=2)
-                                        logging.info(f"{tc_id} - Received: {response_data.hex().upper()}")
+                                        if response_data[:len(expected_bytes)] == bytes(expected_bytes):
+                                            logging.info(f"{tc_id} - {step_desc} -> PASS")
+                                        else:
+                                            logging.warning(f"{tc_id} - {step_desc} -> FAIL - Response Mismatch")
+                                    else:
+                                        logging.info(f"{tc_id} - No expected value provided for verification.")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Hex Error: {ve}")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
+
 
                         elif service_int == 0x3E:  # TesterPresent
                               if subfunc != "":
@@ -623,23 +745,47 @@ class UDSClient:
                                         client.conn.send(raw_request)
                                         response_data = client.conn.wait_frame(timeout=2)
                                        
-                        elif service_int == 0x85:
-                              if subfunc != "":
-                                
-                                subfunc_int = int(subfunc, 16)
-                                raw_request = bytes([0x85, subfunc_int])
+                        elif service_int == 0x85:  # ControlDTCSetting
+                            try:
+                                subfunc_clean = subfunc.strip().replace(" ", "")
+
+                                if subfunc_clean:
+                                    # Validate and convert subfunction to bytes
+                                    if len(subfunc_clean) % 2 != 0:
+                                        subfunc_clean = "0" + subfunc_clean  # pad if needed
+
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                else:
+                                    subfunc_bytes = b''  # No subfunction, test "incorrect message length"
+
+                                # Build the full request
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+
                                 client.conn.send(raw_request)
+                                time.sleep(0.05)
                                 response_data = client.conn.wait_frame(timeout=2)
-                                                        
-                              elif subfunc == "":
-                                
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+
+                                if response_data:
+                                    logging.info(f"{tc_id} - Received: {response_data.hex().upper()}")
+
+                                    # Validate response if expected data is provided
+                                    if expected:
                                         expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        
-                                        client.conn.send(raw_request)
-                                        response_data = client.conn.wait_frame(timeout=2)
+                                        if response_data[:len(expected_bytes)] == bytes(expected_bytes):
+                                            logging.info(f"{tc_id} - {step_desc} -> PASS")
+                                        else:
+                                            logging.warning(f"{tc_id} - {step_desc} -> FAIL - Response mismatch")
+                                    else:
+                                        logging.info(f"{tc_id} - No expected response to validate")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Invalid hex in subfunction: {ve}")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
+
                                         
         
                         elif service_int == 0x27:
@@ -725,38 +871,61 @@ class UDSClient:
                             else:
                                 raise ValueError(f"Unsupported subfunction for service 0x27: {hex(subfunc_int)}")
         
-                        elif service_int == 0x28:
-                            if subfunc != "":
-                             try:
-                                 subfunc_clean = subfunc.strip()
-                                 control_type = int(subfunc_clean, 16)
-                                 communication_type = control_type 
-                                 # Determine communication type dynamically
-                                 
-                                      
-                                 
-                             
-                                 
-                                 raw_request = bytes([0x28, control_type, communication_type])
-                                 logging.info(f"{tc_id} - {step_desc}: Sending raw request {raw_request.hex().upper()}")
-                                 client.conn.send(raw_request)
-                                 response = wait_for_final_response(client, tc_id, step_desc)
-                             
-                                                              
-                             except ValueError:
-                                 logging.error(f"{tc_id} - Invalid subfunction format: '{subfunc}'")
-                             except Exception as e:
-                                 logging.error(f"{tc_id} - Error sending CommunicationControl raw request: {e}")
-                            elif subfunc == "":
-                                 
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
-                                        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        
-                                        client.conn.send(raw_request)
-                                        response_data = client.conn.wait_frame(timeout=2)
-                                
+                        elif service_int == 0x28:  # CommunicationControl
+                            try:
+                                raw_request = bytearray([service_int])  # Start with service byte
+
+                                if subfunc.strip():  # If subfunction provided
+                                    parts = subfunc.strip().split()
+
+                                    if len(parts) == 2:
+                                        # Case like "01 01" or "02 03"
+                                        control_type = int(parts[0], 16)
+                                        comm_type = int(parts[1], 16)
+                                        raw_request += bytes([control_type, comm_type])
+                                        logging.info(f"{tc_id} - Parsed subfunc as split: controlType={control_type:02X}, commType={comm_type:02X}")
+                                    else:
+                                        # Case like "0101", "0003", etc.
+                                        subfunc_clean = subfunc.strip().replace(" ", "")
+                                        if len(subfunc_clean) % 2 != 0:
+                                            subfunc_clean = "0" + subfunc_clean  # Pad if needed
+                                        subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                        raw_request += subfunc_bytes
+                                        logging.info(f"{tc_id} - Parsed subfunc as hex string: {subfunc_bytes.hex().upper()}")
+                                else:
+                                    # Empty subfunction: sends only service byte (invalid case)
+                                    logging.warning(f"{tc_id} - Subfunction is empty, sending only service byte")
+
+                                # Send the constructed raw request
+                                logging.info(f"{tc_id} - {step_desc}: Sending raw request {raw_request.hex().upper()}")
+                                client.conn.send(raw_request)
+
+                                # Wait for response
+                                response_data = client.conn.wait_frame(timeout=2)
+                                if response_data:
+                                    response_hex = response_data.hex().upper()
+                                    logging.info(f"{tc_id} - Received: {response_hex}")
+
+                                    # Compare with expected if available
+                                    if expected:
+                                        try:
+                                            expected_bytes = bytes([int(b, 16) for b in expected.strip().split()])
+                                            if response_data.startswith(expected_bytes):
+                                                logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
+                                            else:
+                                                logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {expected_bytes.hex().upper()}, got {response_hex}")
+                                        except Exception as e:
+                                            logging.error(f"{tc_id} - Error parsing expected data: {e}")
+                                    else:
+                                        logging.info(f"{tc_id} - No expected response provided for validation.")
+                                else:
+                                    logging.warning(f"{tc_id} - No response received.")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Invalid hex in subfunction: '{subfunc}' -> {ve}")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Exception in CommunicationControl handling: {e}")
+
                               
                         # === Response Verification ===
                         if response is not None:
