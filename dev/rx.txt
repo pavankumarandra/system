@@ -1,0 +1,7 @@
+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9999999
+
+elif service_int == 0x28:
+    subfunc_bytes = bytes.fromhex(subfunc.strip()) if subfunc.strip() else b''
+    raw_request = bytes([0x28]) + subfunc_bytes
+    client.conn.send(raw_request)
+    response = client.conn.wait_frame(timeout=2)

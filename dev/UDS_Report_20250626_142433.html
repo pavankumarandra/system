@@ -1,0 +1,16 @@
+<div style="display: flex; justify-content: flex-start; align-items: flex-start; gap: 40px; margin-top: 20px; padding-left: 80px;">
+    <div style="width: 280px;">
+        <p><strong>Generated:</strong> {generated_time}</p>
+        <p><strong>CAN Log File:</strong> {asc_filename}</p>
+        <p><strong>Total Test Cases:</strong> {total}</p>
+        <p class="pass"><strong>Passed:</strong> {passed}</p>
+        <p class="fail"><strong>Failed:</strong> {failed}</p>
+        <p><strong>Test Duration:</strong> {duration:.3f} seconds</p>
+        {f"<p><strong>Target ECU:</strong> {escape(target_ecu)}</p>" if target_ecu else ""}
+        {"".join(f"<p><strong>{escape(k)}:</strong> {escape(v)}</p>" for k, v in ecu_info_data.items()) if ecu_info_data else ""}
+    </div>
+
+    <div id="chart-container" style="width: 320px;">
+        <canvas id="passFailChart" width="300" height="300"></canvas>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+if service_int == 0x2E:
+    try:
+        did_str = subfunc.strip()
+        if not did_str:
+            raise ValueError(f"{tc_id} - Empty DID for 0x2E service")
+
+        did_int = int(did_str, 16)
+        did_hi = (did_int >> 8) & 0xFF
+        did_lo = did_int & 0xFF
+
+        # Prepare write data
+        if data_str := tc["data"].strip():
+            data_bytes = bytes.fromhex(data_str)
+        else:
+            raise ValueError(f"{tc_id} - No write data provided for DID {hex(did_int)}")
+
+        # Construct raw UDS 0x2E request
+        raw_request = bytes([0x2E, did_hi, did_lo]) + data_bytes
+        logging.info(f"{tc_id} - Sending RAW: {raw_request.hex().upper()}")
+
+        client.conn.send(raw_request)
+        time.sleep(0.2)
+        response = client.conn.wait_frame(timeout=2)
+
+        if response is None:
+            raise TimeoutError(f"{tc_id} - No response received")
+
+        raw_payload = list(response)
+        logging.debug(f"{tc_id} - Received: {raw_payload}")
+
+        if raw_payload[0] == 0x6E and raw_payload[1] == did_hi and raw_payload[2] == did_lo:
+            logging.info(f"{tc_id} - 0x2E WriteDataByIdentifier -> PASS")
+        else:
+            failure_reason = f"NRC/Invalid Response: {raw_payload}"
+            logging.warning(f"{tc_id} - FAIL - {failure_reason}")
+    except Exception as e:
+        logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
+        oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+        time.sleep(2)
