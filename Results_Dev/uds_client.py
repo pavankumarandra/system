@@ -652,7 +652,6 @@ class UDSClient:
                                 # Log and send
                                 logging.info(f"{tc_id} - {step_desc}: Sending request {raw_request.hex().upper()}")
                                 client.conn.send(raw_request)
-                                time.sleep(0.05)
 
                                 # Wait for response (handle multi-frame if needed)
                                 response_data = wait_for_final_response(client, tc_id, step_desc)
@@ -681,7 +680,10 @@ class UDSClient:
                                 oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
                             finally:
                                 oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
-                                time.sleep(2)
+
+                            # ✅ Immediately exit so next TC_ID starts fresh
+                            return
+
 
                                         
                         elif service_int == 0x14:  # ClearDiagnosticInformation
