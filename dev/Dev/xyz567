@@ -837,81 +837,72 @@ class UDSClient:
                             else:
                                 raise ValueError(f"Unsupported subfunction for service 0x27: {hex(subfunc_int)}")
         
-                        elif service_int == 0x28:  # CommunicationControl
-                            try:
-                                raw_request = bytearray([service_int])  # Start with service byte
+                        elif service_int == 0x28:
+                            if subfunc != "":
+                                try:
+                                    subfunc_clean = subfunc.strip()
+                                    control_type = int(subfunc_clean, 16)
 
-                                if subfunc.strip():  # If subfunction provided
-                                    parts = subfunc.strip().split()
-
-                                    if len(parts) == 2:
-                                        # Case like "01 01" or "02 03"
-                                        control_type = int(parts[0], 16)
-                                        comm_type = int(parts[1], 16)
-                                        raw_request += bytes([control_type, comm_type])
-                                        logging.info(f"{tc_id} - Parsed subfunc as split: controlType={control_type:02X}, commType={comm_type:02X}")
-                                    else:
-                                        # Case like "0101", "0003", etc.
-                                        subfunc_clean = subfunc.strip().replace(" ", "")
-                                        if len(subfunc_clean) % 2 != 0:
-                                            subfunc_clean = "0" + subfunc_clean  # Pad if needed
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean)
-                                        raw_request += subfunc_bytes
-                                        logging.info(f"{tc_id} - Parsed subfunc as hex string: {subfunc_bytes.hex().upper()}")
-                                else:
-                                    # Empty subfunction: sends only service byte (invalid case)
-                                    logging.warning(f"{tc_id} - Subfunction is empty, sending only service byte")
-
-                                # Send the constructed raw request
-                                logging.info(f"{tc_id} - {step_desc}: Sending raw request {raw_request.hex().upper()}")
-                                client.conn.send(raw_request)
-
-                                # Wait for response
-                                response_data = client.conn.wait_frame(timeout=2)
-                                if response_data:
-                                    response_hex = response_data.hex().upper()
-                                    logging.info(f"{tc_id} - Received: {response_hex}")
-
-                                    # Compare with expected if available
-                                    if expected:
+                                    # Use communication_type from .txt if provided
+                                    if communication_type:
                                         try:
-                                            expected_bytes = bytes([int(b, 16) for b in expected.strip().split()])
-                                            if response_data.startswith(expected_bytes):
-                                                logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
-                                            else:
-                                                logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {expected_bytes.hex().upper()}, got {response_hex}")
-                                        except Exception as e:
-                                            logging.error(f"{tc_id} - Error parsing expected data: {e}")
+                                            communication_type_int = int(communication_type, 16)
+                                        except ValueError:
+                                            logging.warning(f"{tc_id} - Invalid communication_type '{communication_type}', defaulting to control_type")
+                                            communication_type_int = control_type
                                     else:
-                                        logging.info(f"{tc_id} - No expected response provided for validation.")
-                                else:
-                                    logging.warning(f"{tc_id} - No response received.")
+                                        communication_type_int = control_type  # Fallback
 
-                            except ValueError as ve:
-                                logging.error(f"{tc_id} - Invalid hex in subfunction: '{subfunc}' -> {ve}")
-                            except Exception as e:
-                                logging.error(f"{tc_id} - Exception in CommunicationControl handling: {e}")
+                                    raw_request = bytes([0x28, control_type, communication_type_int])
+                                    logging.info(f"{tc_id} - {step_desc}: Sending raw request {raw_request.hex().upper()}")
+                                    client.conn.send(raw_request)
+                                    response = wait_for_final_response(client, tc_id, step_desc)
 
-                              
-                        # === Response Verification ===
-                        if response is not None:
-        
-                            try:
-                                raw_payload = list(response)
-                                logging.debug(f"{tc_id} {step_desc} -> Received payload: {raw_payload}")
-        
-                                status, failure_reason = self.verify_response(raw_payload, expected_bytes, tc_id, step_desc)
-        
-        
-                            except Exception as e:
-                                status = "Fail"
-                                failure_reason = f"Could not extract payload: {str(e)}"
-                                logging.error(f"----------------------------------{tc_id} {step_desc} -> FAIL - {failure_reason}----------------------------------")
-                        else:
-                            status = "Fail"
-                            failure_reason = "No response received (timeout)"
-                            logging.error(f"----------------------------------{tc_id} {step_desc} -> FAIL - {failure_reason}----------------------------------")
-        
+                                except ValueError:
+                                    logging.error(f"{tc_id} - Invalid subfunction format: '{subfunc}'")
+                                except Exception as e:
+                                    logging.error(f"{tc_id} - Error sending CommunicationControl raw request: {e}")
+
+                            elif subfunc == "":
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                client.conn.send(raw_request)
+                                response_data = client.conn.wait_frame(timeout=2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 except Exception as e:
                     status = "Fail"
                     failure_reason = str(e)
@@ -973,5 +964,4 @@ class UDSClient:
                     
         time.sleep(2)
        
-
 
