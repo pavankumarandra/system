@@ -1,28 +1,43 @@
-elif service_int == 0x19:
-    # Read status mask from test case (last column in your .txt file)
-    status_mask_str = step.get("status_Mask", "").strip() if "status_Mask" in step else ""
-    if status_mask_str:
-        try:
-            status_mask = int(status_mask_str, 16)  # Convert from hex string
-        except ValueError:
-            logging.warning(f"Invalid status mask '{status_mask_str}', defaulting to 0xFF")
-            status_mask = 0xFF
-    else:
-        status_mask = 0xFF  # Default if not provided
+import csv
+from collections import defaultdict
 
-    if subfunc != "":
-        subfunc_int = int(subfunc, 16)
-        raw_request = bytes([0x19, subfunc_int, status_mask])
-        logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-        client.conn.send(raw_request)
-        response_data = client.conn.wait_frame(timeout=2)
+grouped_cases = defaultdict(list)
 
-    elif subfunc == "":
-        subfunc_clean = subfunc.strip()
-        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
-        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-        # Append status mask to the request
-        raw_request = bytearray([service_int]) + subfunc_bytes + bytes([status_mask])
-        logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-        client.conn.send(raw_request)
-        response_data = client.conn.wait_frame(timeout=2)
+def load_testcases(file_path):
+    grouped_cases.clear()
+    try:
+        with open(file_path, "r") as f:
+            reader = csv.reader(f)
+            header = next(reader)  # Skip header
+
+            for row in reader:
+                if not row or len(row) < 5:
+                    continue  # Skip empty or malformed lines
+
+                tc_id = row[0].strip()
+                step_desc = row[1].strip()
+                service_id = row[2].strip()
+                subfunction_or_did = row[3].strip()
+                expected_response = row[4].strip()
+                write_data = row[5].strip() if len(row) > 5 else ""
+                addressing = row[6].strip().lower() if len(row) > 6 else "physical"
+                format_type = row[7].strip() if len(row) > 7 else "Hex"
+                status_mask = row[8].strip() if len(row) > 8 else ""  # New column
+
+                grouped_cases[tc_id].append((
+                    tc_id,               # 0
+                    step_desc,           # 1
+                    service_id,          # 2
+                    subfunction_or_did,  # 3
+                    expected_response,   # 4
+                    write_data,          # 5
+                    addressing,          # 6
+                    format_type,         # 7
+                    status_mask          # 8  <-- Added
+                ))
+
+        return grouped_cases
+
+    except Exception as e:
+        print(f"Error parsing testcases: {e}")
+        return {}
