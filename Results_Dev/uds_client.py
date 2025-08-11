@@ -627,62 +627,35 @@ class UDSClient:
         
                             
         
-                        elif service_int == 0x19:  # ReadDTCInformation
-                            try:
-                                raw_request = bytearray([service_int])  # Start with service byte
+                        elif service_int == 0x19:
+                            # Read status mask from test case (last column in your .txt file)
+                            status_mask_str = step.get("status_Mask", "").strip() if "status_Mask" in step else ""
+                            if status_mask_str:
+                                try:
+                                    status_mask = int(status_mask_str, 16)  # Convert from hex string
+                                except ValueError:
+                                    logging.warning(f"Invalid status mask '{status_mask_str}', defaulting to 0xFF")
+                                    status_mask = 0xFF
+                            else:
+                                status_mask = 0xFF  # Default if not provided
 
-                                if subfunc.strip():
-                                    # Clean and normalize subfunction (remove 0x, spaces)
-                                    subfunc_clean = subfunc.replace("0x", "").replace(" ", "").strip()
-
-                                    # Validate hex string
-                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
-                                        raise ValueError(f"Invalid hex characters in subfunction: '{subfunc}'")
-
-                                    # Pad odd length (e.g., "201" -> "0201")
-                                    if len(subfunc_clean) % 2 != 0:
-                                        subfunc_clean = "0" + subfunc_clean
-
-                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
-                                    raw_request += subfunc_bytes
-                                else:
-                                    # No subfunction – just the service byte (tests invalid format)
-                                    logging.warning(f"{tc_id} - Subfunction is empty: Sending only 0x19")
-
-                                # Log and send
-                                logging.info(f"{tc_id} - {step_desc}: Sending request {raw_request.hex().upper()}")
+                            if subfunc != "":
+                                subfunc_int = int(subfunc, 16)
+                                raw_request = bytes([0x19, subfunc_int, status_mask])
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
                                 client.conn.send(raw_request)
+                                response_data = client.conn.wait_frame(timeout=2)
 
-                                # Wait for response (handle multi-frame if needed)
-                                response_data = wait_for_final_response(client, tc_id, step_desc)
+                            elif subfunc == "":
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                # Append status mask to the request
+                                raw_request = bytearray([service_int]) + subfunc_bytes + bytes([status_mask])
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                client.conn.send(raw_request)
+                                response_data = client.conn.wait_frame(timeout=2)
 
-                                if response_data:
-                                    response_hex = response_data.hex().upper()
-                                    logging.info(f"{tc_id} - Received: {response_hex}")
-
-                                    # Compare response if expected provided
-                                    if expected:
-                                        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        if response_data.startswith(bytes(expected_bytes)):
-                                            logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
-                                        else:
-                                            logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {bytes(expected_bytes).hex().upper()}")
-                                    else:
-                                        logging.info(f"{tc_id} - No expected result provided")
-                                else:
-                                    logging.warning(f"{tc_id} - No response received")
-
-                            except ValueError as ve:
-                                logging.error(f"{tc_id} - Subfunction hex error: {ve}")
-                                oled.display_centered_text(f"{tc_id}\nHex Error")
-                            except Exception as e:
-                                logging.error(f"{tc_id} - Unexpected Error: {type(e).__name__} - {str(e)}")
-                                oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
-                            finally:
-                                oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
-
-                            # ✅ Immediately exit so next TC_ID starts fresh
-                            return
 
 
                                         
