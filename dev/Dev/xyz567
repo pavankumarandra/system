@@ -1,40 +1,59 @@
-def load_testcases(file_path):
-    cases = []
-    try:
-        with open(file_path, "r") as f:
-            reader = csv.reader(f)
-            header = next(reader)  # Skip header
+def run_testcase(self, oled):
+    testcase_file_path = self.get_testcase_file_path()
+    self.start_logging(log_name_suffix="Testcase")
 
-            for row in reader:
-                if not row or len(row) < 5:
-                    continue  # Skip empty or malformed lines
+    # Load flat list of test cases
+    test_cases = load_testcases(testcase_file_path)
+    self.context = {}
+    immediate_mode = self.config["uds"].get("immediate_mode", False)
 
-                tc_id = row[0].strip()
-                step_desc = row[1].strip()
-                service_id = row[2].strip()
-                subfunction_or_did = row[3].strip()
-                expected_response = row[4].strip()
-                write_data = row[5].strip() if len(row) > 5 else ""
-                addressing = row[6].strip().lower() if len(row) > 6 else "physical"
+    for step in test_cases:
+        tc_id, step_desc, service, subfunc, expected, write_data, addressing = step
 
-                # Store each row as its own test case
-                cases.append((
-                    tc_id,
-                    step_desc,
-                    service_id,
-                    subfunction_or_did,
-                    expected_response,
-                    write_data,
-                    addressing
-                ))
+        try:
+            self.switch_mode(addressing)
 
-        return cases
+            with Client(self.active_conn["conn"], request_timeout=2,
+                        config=self.active_conn["client_config"]) as client:
 
-    except Exception as e:
-        print(f"Error parsing testcases: {e}")
-        return []
-test_cases = load_testcases(testcase_file_path)
-for case in test_cases:
-    tc_id, step_desc, service, subfunc, expected, write_data, addressing = case
-    logging.info(f"Running Test Case: {tc_id}")
-    ...
+                logging.info(f"Running Test Case: {tc_id}")
+                logging.info(f"Switched to {addressing} mode for TC: {tc_id} Step: {step_desc}")
+
+                service_int = int(service, 16)
+                expected_bytes = [int(b, 16) for b in expected.strip().split()] if expected else []
+                data_to_write = [int(b, 16) for b in write_data.strip().split()] if write_data else []
+
+                # === Example for SID 0x19 ===
+                if service_int == 0x19:
+                    raw_request = bytearray([service_int])
+
+                    if subfunc.strip():
+                        subfunc_clean = subfunc.replace("0x", "").replace(" ", "").strip()
+                        if len(subfunc_clean) % 2 != 0:
+                            subfunc_clean = "0" + subfunc_clean
+                        raw_request += bytes.fromhex(subfunc_clean)
+
+                    logging.info(f"{tc_id} - Sending request {raw_request.hex().upper()}")
+                    client.conn.send(raw_request)
+
+                    # Wait for response
+                    response_data = wait_for_final_response(client, tc_id, step_desc)
+
+                    if response_data:
+                        response_hex = response_data.hex().upper()
+                        logging.info(f"{tc_id} - Received: {response_hex}")
+                        if expected_bytes:
+                            if response_data.startswith(bytes(expected_bytes)):
+                                logging.info(f"{tc_id} -> ✅ PASS")
+                            else:
+                                logging.warning(f"{tc_id} -> ❌ FAIL")
+                    else:
+                        logging.warning(f"{tc_id} - No response received")
+
+            oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
+
+        except Exception as e:
+            logging.error(f"{tc_id} - Error: {e}")
+            oled.display_centered_text(f"{tc_id}\nError")
+
+        # ✅ After each test case, we immediately proceed to the next one
