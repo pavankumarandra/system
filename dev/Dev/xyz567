@@ -452,25 +452,24 @@ class UDSClient:
                         # Send UDS request
                               
                         if service_int == 0x10:
-                            if subfunc != "":
-              
-                                subfunc_int = int(subfunc, 16)
-                                raw_request = bytes([0x10, subfunc_int])
+                            if subfunc:
+                                # Convert string like "01 01" to bytes
+                                subfunc_bytes = bytes.fromhex(subfunc.strip())
+                                raw_request = bytes([0x10]) + subfunc_bytes
                                 time.sleep(0.05)
                                 client.conn.send(raw_request)
                                 response = client.conn.wait_frame(timeout=4)
-                                                         
-                            elif subfunc == "":
-                                 
-                                        
-                                        subfunc_clean = subfunc.strip()
-                                        subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
-                                        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        raw_request = bytearray([service_int]) + subfunc_bytes
-                                        logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-                                        time.sleep(0.05)
-                                        client.conn.send(raw_request)
-                                        response = client.conn.wait_frame(timeout=2)
+
+                            else:
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                time.sleep(0.05)
+                                client.conn.send(raw_request)
+                                response = client.conn.wait_frame(timeout=2)
+
 
                                         
                         elif service_int == 0x11:
