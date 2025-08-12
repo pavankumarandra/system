@@ -452,24 +452,100 @@ class UDSClient:
                         # Send UDS request
                               
                         if service_int == 0x10:
-                            if subfunc:
-                                # Convert string like "01 01" to bytes
-                                subfunc_bytes = bytes.fromhex(subfunc.strip())
-                                raw_request = bytes([0x10]) + subfunc_bytes
-                                time.sleep(0.05)
-                                client.conn.send(raw_request)
-                                response = client.conn.wait_frame(timeout=4)
+                            try:
+                                # --- Clean and validate subfunction (may be empty or multi-byte)
+                                subfunc_clean = subfunc.strip().replace("0x", "").replace(",", " ").replace("  ", " ").replace(" ", "")
+                                if subfunc_clean:
+                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
+                                        raise ValueError(f"Invalid hex in subfunction: {subfunc_clean}")
+                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
+                                else:
+                                    subfunc_bytes = b''  # for missing subfunction test
 
-                            else:
-                                subfunc_clean = subfunc.strip()
-                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
-                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                # --- Build raw UDS request
+                                raw_request = bytearray([0x10]) + subfunc_bytes
                                 logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                if oled:
+                                    oled.display_centered_text(f"{tc_id}\nSending")
                                 time.sleep(0.05)
+
+                                # --- Send and receive
                                 client.conn.send(raw_request)
                                 response = client.conn.wait_frame(timeout=2)
 
+                                if response:
+                                    response_hex = response.hex().upper()
+                                    logging.info(f"{tc_id} - Received: {response_hex}")
+
+                                    # --- Process expected response
+                                    if expected:
+                                        expected_clean = expected.strip().replace(" ", "")
+                                        expected_bytes = bytes.fromhex(expected_clean)
+
+                                        if response.startswith(expected_bytes[:len(response)]):
+                                            logging.info(f"{tc_id} - {step_desc} -> PASS")
+                                        else:
+                                            logging.warning(f"{tc_id} - {step_desc} -> FAIL - Unexpected response")
+                                    else:
+                                        logging.info(f"{tc_id} - {step_desc} -> PASS (No expected to compare)")
+
+                                else:
+                                    logging.warning(f"{tc_id} - No response received")
+                                    if oled:
+                                        oled.display_centered_text(f"{tc_id}\nNo Response")
+
+                            except ValueError as ve:
+                                logging.error(f"{tc_id} - Hex Error: {str(ve)}")
+                                if oled:
+                                    oled.display_centered_text(f"{tc_id}\nHex Error")
+                            except Exception as e:
+                                logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
+                                if oled:
+                                    oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+                            finally:
+                                if oled:
+                                    oled.display_centered_text(f"{tc_id}\n{step_desc[:20]}")
+                                time.sleep(1.5)
+                        elif service_int == 0x2F:
+                            # control_type from test case file (string like "02")
+                            control_type_val = None
+                            if control_type:
+                                try:
+                                    control_type_val = int(control_type, 16)
+                                except ValueError:
+                                    logging.error(f"{tc_id} - Invalid control_type value: '{control_type}'")
+                                    control_type_val = None
+
+                            if subfunc != "":
+                                # Convert DID from hex string (like F010) to two bytes
+                                try:
+                                    subfunc_bytes = bytes.fromhex(subfunc.strip())
+                                except ValueError:
+                                    logging.error(f"{tc_id} - Invalid subfunction format: '{subfunc}'")
+                                    subfunc_bytes = b''
+
+                                if control_type_val is not None:
+                                    raw_request = bytes([0x2F]) + subfunc_bytes + bytes([control_type_val])
+                                else:
+                                    raw_request = bytes([0x2F]) + subfunc_bytes
+
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                client.conn.send(raw_request)
+                                response_data = client.conn.wait_frame(timeout=5)
+
+                            elif subfunc == "":
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+
+                                if control_type_val is not None:
+                                    raw_request = bytearray([service_int]) + subfunc_bytes + bytes([control_type_val])
+                                else:
+                                    raw_request = bytearray([service_int]) + subfunc_bytes
+
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                client.conn.send(raw_request)
+                                response_data = client.conn.wait_frame(timeout=2)
 
                                         
                         elif service_int == 0x11:
