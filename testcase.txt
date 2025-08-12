@@ -1,8 +1,1 @@
-#TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing, Format, Status_Mask, Communication_Type
-ECU_INFO-1 , S/W Version,0x22,0xF1DD,10 0B 62 F1 DD 30 31 2E 30 30 2E 30 31 AA AA,  ,Physical,Ascii,  , 
-ECU_INFO-2 , B-CAN Version,0x22,0xF100,06 62 F1 00 25 02 01 AA,  ,Physical,Ascii,  , ,
-ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Ascii,  ,
-ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Ascii,  , 
-ECU_INFO-5 , H/W Version,0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Ascii,  , 
-TC_ID-001 ,  Testcase:reportRead DTCByStatusMask (19 02 08) in past,0x19,0x02,03 59 02 08 AA AA AA AA,  ,Physical,Hex ,0x08, 
-TC_ID-002, Testcase: CommunicationControl enable Rx/Tx,0x28,0x00,03 68 00, ,Physical,Hex,,08
+#TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Format, Selection, Comments, Write_Data, Addressing
