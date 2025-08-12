@@ -1,0 +1,52 @@
+#TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing, Format, Status_Mask, Communication_Type, controltype
+ECU_INFO-1 , S/W Version,0x22,0xF1DD,10 0B 62 F1 DD 30 31 2E 30 30 2E 30 31 AA AA,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-2 , B-CAN Version,0x22,0xF100,06 62 F1 00 25 02 01 AA,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-5 , H/W Version,0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Ascii,  ,  ,  
+TC_ID-001 , Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
+TC_ID-003 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
+TC_ID-004 , Sub function not supported(10 FF),0x10,0xFF,03 7F 10 12 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+TC_ID-005 , Incorrect message length(No sub function)(10),0x10,  ,03 7F 10 13 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+TC_ID-007 , Hard reset,0x11,0x01,02 51 01 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
+TC_ID-008 , Soft reset,0x11,0x03,03 7F 11 12 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+TC_ID-009 , Sub function not supported(out ofrange)(11 08) ,0x11,0x08,03 7F 11 12 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+TC_ID-010 , Incorrect message length(No sub function)(11),0x11,  ,03 7F 11 13 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+PC_ID-003 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
+TC_ID-173 , Request out of range(invalid identifier))(22 F1FF),0x22,0xF1FF,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,  ,  
+PC_ID-025 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
+TC_ID-178 , PreCondition: PC_ID-025  Testcase:Supported check DID,0x2F,0xF010,06 6F 03 00 32 01 F4 AA, ,Physical,Hex,  ,  ,0x02
+TC_ID-179 , PreCondition: PC_ID-025  Testcase:FRONT SEAT Heat Mode to the High START,0x2F,0xF011,07 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-180 , PreCondition: PC_ID-025  Testcase:FRONT SEAT Heat Mode to the High STOP,0x2F,0xF011,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-181 , PreCondition: PC_ID-025  Testcase:FRONT SEAT Vent Mode to the High START,0x2F,0xF012,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-182 , PreCondition: PC_ID-025  Testcase:FRONT SEAT Vent Mode to the High STOP,0x2F,0XF012,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-183 , PreCondition: PC_ID-025  Testcase:DRIVER SEAT Heat Mode to the High START,0x2F,0XF013,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-184 , PreCondition: PC_ID-025  Testcase:DRIVER SEAT Heat Mode to the High STOP,0x2F,0XF013,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-185 , PreCondition: PC_ID-025  Testcase:DRIVER SEAT Vent Mode to the High START,0x2F,0XF014,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-186 , PreCondition: PC_ID-025  Testcase:DRIVER SEAT Vent Mode to the High STOP,0x2F,0XF014,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-187 , PreCondition: PC_ID-025  Testcase:PASSENGER SEAT Heat Mode to the High START,0x2F,0XF015,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-188 , PreCondition: PC_ID-025  Testcase:PASSENGER SEAT Heat Mode to the High STOP,0x2F,0XF015,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-189 , PreCondition: PC_ID-025  Testcase:PASSENGER SEAT Vent Mode to the High START,0x2F,0XF016,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-190 , PreCondition: PC_ID-025  Testcase:PASSENGER SEAT Vent Mode to the High STOP,0x2F,0XF016,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-191 , PreCondition: PC_ID-025  Testcase:REAR SEAT Heat Mode to the High START,0x2F,0XF017,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-192 , PreCondition: PC_ID-025  Testcase:REAR SEAT Heat Mode to the High STOP,0x2F,0XF017,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-193 , PreCondition: PC_ID-025  Testcase:REAR SEAT Vent Mode to the High START,0x2F,0XF018,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-194 , PreCondition: PC_ID-025  Testcase:REAR SEAT Vent Mode to the High STOP,0x2F,0XF018,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-195 , PreCondition: PC_ID-025  Testcase:REAR LH SEAT Heat Mode to the High START,0x2F,0XF019,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-196 , PreCondition: PC_ID-025  Testcase:REAR LH SEAT Heat Mode to the High STOP,0x2F,0XF019,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-197 , PreCondition: PC_ID-025  Testcase:REAR LH SEAT Vent Mode to the High START,0x2F,0XF01A,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-198 , PreCondition: PC_ID-025  Testcase:REAR LH SEAT Vent Mode to the High STOP,0x2F,0XF01A,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-199 , PreCondition: PC_ID-025  Testcase:REAR RH SEAT Heat Mode to the High START,0x2F,0XF01B08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-200 , PreCondition: PC_ID-025  Testcase:REAR RH SEAT Heat Mode to the High STOP,0x2F,0XF01B,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-201 , PreCondition: PC_ID-025  Testcase:REAR RH SEAT Vent Mode to the High START,0x2F,0XF01C,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-202 , PreCondition: PC_ID-025  Testcase:REAR RH SEAT Vent Mode to the High STOP,0x2F,0XF01C,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-203 , PreCondition: PC_ID-025  Testcase:3RD SEAT Heat Mode to the High START,0x2F,0XF01D,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-204 , PreCondition: PC_ID-025  Testcase:3RD SEAT Heat Mode to the High STOP,0x2F,0XF01D,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-205 , PreCondition: PC_ID-025  Testcase:IOC_LegrestDown_OUT START,0x2F,0XF01E,08 6F  00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-206 , PreCondition: PC_ID-025  Testcase:IOC_LegrestDown_OUT STOP,0x2F,0XF01E,08 6F  03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-207 , PreCondition: PC_ID-025  Testcase:3RD LH SEAT Heat Mode to the High START,0x2F,0XF01F,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-208 , PreCondition: PC_ID-025  Testcase:3RD LH SEAT Heat Mode to the High STOP,0x2F,0XF01F,08 6F 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-209 , PreCondition: PC_ID-025  Testcase:IOC_ReclineFWD_OUT START,0x2F,0xF020,08 6F  00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-210 , PreCondition: PC_ID-025  Testcase:IOC_ReclineFWD_OUT STOP,0x2F,0xF020,08 6F  00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+TC_ID-211 , PreCondition: PC_ID-025  Testcase:3RD RH SEAT Heat Mode to the High START,0x2F,0xF021,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
+TC_ID-212 , PreCondition: PC_ID-025  Testcase:3RD RH SEAT Heat Mode to the High STOP,0x2F,0xF021,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
