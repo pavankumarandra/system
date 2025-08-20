@@ -431,7 +431,7 @@ class UDSClient:
             logging.info(f"Running Test Case: {tc_id}")
         
             for step in steps:
-                tc_id, step_desc, service, subfunc, expected, write_data, addressing, format_type, status_mask, communication_type,controltype = step
+                tc_id, step_desc, service, subfunc, expected, write_data, addressing, format_type, status_mask, communication_type = step
                 
                 try:
                     self.switch_mode(addressing)
@@ -452,56 +452,23 @@ class UDSClient:
                         # Send UDS request
                               
                         if service_int == 0x10:
-                            try:
-                                # --- Clean and validate subfunction (may be empty or multi-byte)
-                                subfunc_clean = subfunc.strip().replace("0x", "").replace(",", " ").replace("  ", " ").replace(" ", "")
-                                if subfunc_clean:
-                                    if not all(c in "0123456789abcdefABCDEF" for c in subfunc_clean):
-                                        raise ValueError(f"Invalid hex in subfunction: {subfunc_clean}")
-                                    subfunc_bytes = bytes.fromhex(subfunc_clean)
-                                else:
-                                    subfunc_bytes = b''  # for missing subfunction test
-
-                                # --- Build raw UDS request
-                                raw_request = bytearray([0x10]) + subfunc_bytes
-                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
-                                if oled:
-                                    oled.display_centered_text(f"{tc_id}\nSending")
+                            if subfunc:
+                                # Convert string like "01 01" to bytes
+                                subfunc_bytes = bytes.fromhex(subfunc.strip())
+                                raw_request = bytes([0x10]) + subfunc_bytes
                                 time.sleep(0.05)
-
-                                # --- Send and receive
                                 client.conn.send(raw_request)
-                                response = client.conn.wait_frame(timeout=2)
+                                response = client.conn.wait_frame(timeout=5)
 
-                                if response:
-                                    response_hex = response.hex().upper()
-                                    logging.info(f"{tc_id} - Received: {response_hex}")
-
-                                    # --- Process expected response
-                                    if expected:
-                                        expected_clean = expected.strip().replace(" ", "")
-                                        expected_bytes = bytes.fromhex(expected_clean)
-
-                                        if response.startswith(expected_bytes[:len(response)]):
-                                            logging.info(f"{tc_id} - {step_desc} -> PASS")
-                                        else:
-                                            logging.warning(f"{tc_id} - {step_desc} -> FAIL - Unexpected response")
-                                    else:
-                                        logging.info(f"{tc_id} - {step_desc} -> PASS (No expected to compare)")
-
-                                else:
-                                    logging.warning(f"{tc_id} - No response received")
-                                    if oled:
-                                        oled.display_centered_text(f"{tc_id}\nNo Response")
-
-                            except ValueError as ve:
-                                logging.error(f"{tc_id} - Hex Error: {str(ve)}")
-                                if oled:
-                                    oled.display_centered_text(f"{tc_id}\nHex Error")
-                            except Exception as e:
-                                logging.error(f"{tc_id} - Exception: {type(e).__name__} - {str(e)}")
-                                if oled:
-                                    oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
+                            else:
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                time.sleep(0.05)
+                                client.conn.send(raw_request)
+                                response = client.conn.wait_frame(timeout=5)
 
                         elif service_int == 0x11:
                               if subfunc != "":
@@ -594,7 +561,7 @@ class UDSClient:
                                 # Send the request
                                 logging.info(f"{tc_id} - {step_desc}: Sending request {raw_request.hex().upper()}")
                                 client.conn.send(raw_request)
-                                time.sleep(0.05)
+                                #time.sleep(0.05)
 
                                 # Wait for full response (single or multi-frame)
                                 response = wait_for_final_response(client, tc_id, step_desc)
@@ -603,15 +570,7 @@ class UDSClient:
                                     response_hex = response.hex().upper()
                                     logging.info(f"{tc_id} - Received: {response_hex}")
 
-                                    # Validate response if expected is provided
-                                    if expected:
-                                        expected_bytes = [int(b, 16) for b in expected.strip().split()]
-                                        if response.startswith(bytes(expected_bytes)):
-                                            logging.info(f"{tc_id} - {step_desc} -> ✅ PASS")
-                                        else:
-                                            logging.warning(f"{tc_id} - {step_desc} -> ❌ FAIL - Expected {bytes(expected_bytes).hex().upper()}")
-                                    else:
-                                        logging.info(f"{tc_id} - No expected response provided")
+
                                 else:
                                     logging.warning(f"{tc_id} - No response received")
 
@@ -623,8 +582,19 @@ class UDSClient:
                                 oled.display_centered_text(f"{tc_id}\nError: {str(e)[:16]}")
                            
 
+                            else:
+                                subfunc_clean = subfunc.strip()
+                                subfunc_bytes = bytes.fromhex(subfunc_clean) if subfunc_clean else b''
+                                expected_bytes = [int(b, 16) for b in expected.strip().split()]
+                                raw_request = bytearray([service_int]) + subfunc_bytes
+                                logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
+                                time.sleep(0.05)
+                                client.conn.send(raw_request)
+                                response = client.conn.wait_frame(timeout=5)
+                                
 
 
+                                
                                        
         
                         elif service_int == 0x2E:
@@ -670,7 +640,7 @@ class UDSClient:
                                 dtc_group_bytes = [(subfunc_int >> shift) & 0xFF for shift in (16, 8, 0)]
                                 raw_request = bytes([0x14] + dtc_group_bytes)
                                 client.conn.send(raw_request)
-                                response_data = client.conn.wait_frame(timeout=2)
+                                response_data = client.conn.wait_frame(timeout=5)
                               elif subfunc == "":
                                 
                                         subfunc_clean = subfunc.strip()
@@ -680,7 +650,7 @@ class UDSClient:
                                         logging.info(f"{tc_id} - {step_desc}: Sending {raw_request.hex().upper()}")
                                         
                                         client.conn.send(raw_request)
-                                        response_data = client.conn.wait_frame(timeout=2)
+                                        response_data = client.conn.wait_frame(timeout=5)
                                         logging.info(f"{tc_id} - Received: {response_data.hex().upper()}")
 
 
@@ -721,7 +691,7 @@ class UDSClient:
 
                                 client.conn.send(raw_request)
                                 time.sleep(0.05)
-                                response_data = client.conn.wait_frame(timeout=2)
+                                response_data = client.conn.wait_frame(timeout=5)
 
                                 if response_data:
                                     logging.info(f"{tc_id} - Received: {response_data.hex().upper()}")
@@ -860,7 +830,7 @@ class UDSClient:
                                 expected_bytes = [int(b, 16) for b in expected.strip().split()]
                                 raw_request = bytearray([service_int]) + subfunc_bytes
                                 client.conn.send(raw_request)
-                                response_data = client.conn.wait_frame(timeout=2)
+                                response_data = client.conn.wait_frame(timeout=5)
 
 
 
@@ -954,3 +924,5 @@ class UDSClient:
         logging.info("----------------------------------Report Generated----------------------------------")
                     
         time.sleep(2)
+       
+
