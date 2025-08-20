@@ -1,0 +1,94 @@
+#TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing, Format, Status_Mask, Communication_Type
+ECU_INFO-1 , S/W Version,0x22,0xF1DD,10 0B 62 F1 DD 30 31 2E 30 30 2E 30 31 AA AA,  ,Physical,Ascii,	,
+ECU_INFO-2 , B-CAN Version,0x22,0xF100,06 62 F1 00 25 02 01 AA,  ,Physical,Ascii,	,
+ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Ascii,	,
+ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Ascii,	,
+ECU_INFO-5 , H/W Version,0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Ascii,	,
+PC_ID-001 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-001 , PreCondition: PC_ID-001 Testcase:Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-002 , PreCondition: PC_ID-001 Testcase:Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-003 , PreCondition: PC_ID-001 Testcase:Sub function not supported(10 FF),0x10,0xFF,03 7F 10 12 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-004 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub function)(10),0x10,  ,03 7F 10 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-006 , PreCondition: PC_ID-001 Testcase:Hard reset,0x11,0x01,02 51 01 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-007 , PreCondition: PC_ID-001 Testcase:Soft reset,0x11,0x03,02 51 03 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-008 , PreCondition: PC_ID-001 Testcase:Sub function not supported(out ofrange)(11 08) ,0x11,0x08,03 7F 11 12 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-009 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub function)(11),0x11,  ,03 7F 11 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-011 , PreCondition: PC_ID-001 Testcase:Service not supported in active session,0x28,0x00,03 7F 11 7F AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-012 , PreCondition: PC_ID-001 Testcase:Fault memory clear Default session(14 FFFFFF) All group,0x14,0xFFFFFF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-013 , PreCondition: PC_ID-001  Testcase:Fault memory clear Default session(14 8000FF) Body group,0x14,0x8000FF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-014 , PreCondition: PC_ID-001  Testcase:Service not supported in active session,0x85,0x01,03 7F 85 7F AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-015 , PreCondition: PC_ID-001  Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x01 ,06 59 01 08 00 00 00 AA,  ,Physical,Hex,0x08,
+TC_ID-016 , PreCondition: PC_ID-001   Testcase:reportNumberofDTCByStatusMask(19 01 01) ,0x19,0x01 ,06 59 01 01 00 00 00 AA,  ,Physical,Hex,0x01,
+TC_ID-017 , PreCondition: PC_ID-001   Testcase:Report Supported DTC(19 0A 09) ,0x19,0x0A,06 59 0A 09 00 00 00 AA,,Physical,Hex,0x09,
+TC_ID-018 , PreCondition: PC_ID-001   Testcase:reportRead DTCByStatusMask (19 02 08) in past,0x19,0x02,03 59 02 08 AA AA AA AA,  ,Physical,Hex,08,
+TC_ID-019 , PreCondition: PC_ID-001  Testcase:reportRead DTCByStatusMask (19 02 01) in Active,0x19,0x02,03 59 02 01 AA AA AA AA,  ,Physical,Hex,01,
+TC_ID-020 , PreCondition: PC_ID-001   Testcase:Subfunction not supported(19 0F 01 ),0x19,0x0F,03 7F 11 12 AA AA AA AA,  ,Physical,Hex,01,
+TC_ID-021 , PreCondition: PC_ID-001   Testcase:InCorrect Message Length(19 02 01 01),0x19,0x02 0x01 0x01,03 7F 11 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-022 , PreCondition: PC_ID-001   Testcase:ECU_Serial_Number_F1_8C_Read,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-023 , PreCondition: PC_ID-001  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Hex,	,
+TC_ID-024 , PreCondition: PC_ID-001 Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,10 0D 62 F1 87 39 36 35 34 30 53 42 30 30 30,  ,Physical,Hex,	,
+TC_ID-025 , PreCondition: PC_ID-001   Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,07 62 F1 97 4D 4B 42 44,  ,Physical,Hex,	,
+TC_ID-026 , PreCondition: PC_ID-001  Testcase:ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,07 62 F1 A1 61 38 31 32,  ,Physical,Hex,	,
+TC_ID-027 , PreCondition: PC_ID-001   Testcase:Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Extendedsession),0x22,0xF1A0,10 08 62 F1 A0 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-028 , PreCondition: PC_ID-001   Testcase:ECU_Software_UNIT_number_F1_B0_Read(Extendedsession),0x22,0xF1B0,04 62 F1 B0 01 AA AA AA,  ,Physical,Hex,	,
+TC_ID-029 , PreCondition: PC_ID-001 Testcase:SystemSupplierECUSoftwareVersionNumbe_DataIdentifier_F1_95_Read(Defaultsession),0x22,0xF195,10 08 62 F1 95 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-030 , PreCondition: PC_ID-001  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,10 08 62 F1 B1 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-031 , PreCondition: PC_ID-001 Testcase:Vehicle_Manufacturer_ECU_HW_Number_F1_91_Read(Defaultsession),0x22,0xF191,10 08 62 F1 91 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-032 , PreCondition: PC_ID-001  Testcase:HardwareVersionNumber_F1_93_Read(Extendedsession),0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-033 , PreCondition: PC_ID-001  Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,10 2B 62 F1 EF 07 16 0B 52 31 30 20 41 59 31 2F 31 2F 30 0C 52 31 35 35 20 41 59 31 2F 31 2F 30 0C 52 31 35 36 20 41 59 31 2F 31 2F 30 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-034 , PreCondition: PC_ID-001  Testcase:ECUSoftwareUnit1IVDDataIdentifier_F1_C1_Read(Defaultsession),0x22,0xF1C1,10 23 62 F1 C1 9F 27 A1 70 58 C0 0F 18 3B 64 D2 4C B6 6F 93 8D D5 1D FE 9D 05 67 39 C7 3A AF CE CC 78 EB 03 AF AA AA AA AA AA AA,  ,Physical,Hex,	,
+PC_ID-002 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-042 , PreCondition: PC_ID-002  Testcase:Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-043 , PreCondition: PC_ID-002  Testcase:Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-044 , PreCondition: PC_ID-002  Testcase:Hard reset,0x11,0x01,02 51 01 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-045 , PreCondition: PC_ID-002  Testcase:Soft reset,0x11,0x03,02 51 03 AA AA AA AA AA,  ,Physical,Hex,	,
+PC_ID-014 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-046 , PreCondition: PC_ID-014  Testcase:Disable Rx and Tx(28 00 01) normal communication message,0x28,0x00,02 68 00 AA AA AA AA AA,  ,Functional,Hex,  ,01
+TC_ID-047 , PreCondition: PC_ID-014   Testcase:Disable Rx and Tx(28 00 02) Network management communication message,0x28,0x00,02 68 00 AA AA AA AA AA,  ,Functional,Hex, ,02
+TC_ID-048 , PreCondition: PC_ID-014   Testcase:Disable Rx and Tx(28 00 03) network management communication message and norml communication message,0x28,0x00,02 68 00 AA AA AA AA AA,  ,Functional,Hex, ,03
+TC_ID-049 , PreCondition: PC_ID-014   Testcase:EnableRxAndDisableTx Extended session(28 01 01) normal communication message,0x28,0x01,02 68 01 AA AA AA AA AA,  ,Functional,Hex, ,01
+TC_ID-050 , PreCondition: PC_ID-014   Testcase:EnableRxAndDisableTx Extended session(28 01 02) Network management communication message,0x28,0x01,02 68 01 AA AA AA AA AA,  ,Functional,Hex, ,02
+TC_ID-051 , PreCondition: PC_ID-014  Testcase:EnableRxAndDisableTx Extended session(28 01 03) network management communication message and norml communication message,0x28,0x01,02 68 01 AA AA AA AA AA,  ,Functional,Hex, ,03
+TC_ID-052 , PreCondition: PC_ID-014  Testcase:DisableRxAndEnableTx Extended session(28 02 01) normal communication message,0x28,0x02,02 68 02 AA AA AA AA AA,  ,Functional,Hex, ,01
+TC_ID-053 , PreCondition: PC_ID-014   Testcase:DisableRxAndEnableTx Extended session(28 02 02) network management communication message,0x28,0x02,02 68 02 AA AA AA AA AA,  ,Functional,Hex,	,02
+TC_ID-054 , PreCondition: PC_ID-014   Testcase:DisableRxAndEnableTx Extended session(28 02 03) network management communication message and norml communication message,0x28,0x02,02 68 02 AA AA AA AA AA,  ,Functional,Hex, ,03
+TC_ID-055 , PreCondition: PC_ID-014  Testcase:DisableRxAndDisableTx Extended session(28 03 01) normal communication message,0x28,0x03,02 68 03 AA AA AA AA AA,  ,Functional,Hex, ,01
+TC_ID-056 , PreCondition: PC_ID-014   Testcase:DisableRxAndDisableTx Extended session(28 03 02) network management communication message,0x28,0x03,02 68 03 AA AA AA AA AA,  ,Functional,Hex,	,02
+TC_ID-057 , PreCondition: PC_ID-014   Testcase:DisableRxAndDisableTx Extended session(28 03 03) network management communication message and norml communication message,0x28,0x03,02 68 03 AA AA AA AA AA,  ,Functional,Hex,	,03
+TC_ID-058 , PreCondition: PC_ID-014     Testcase: subfunction not supported,0x28,0xFF,03 7F 28 12 AA AA AA AA,  ,Functional,Hex, ,0x01
+TC_ID-059 , PreCondition: PC_ID-014    Testcase: Incorrect message length,0x28,0x01,03 7F 28 13 AA AA AA AA,  ,Functional,Hex, ,0x0101
+TC_ID-060 , PreCondition: PC_ID-014      Testcase: Request out of range,0x28,0x01,03 7F 28 31 AA AA AA AA,  ,Functional,Hex, ,0x0105
+PC_ID-015 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex, ,
+TC_ID-061 , PreCondition: PC_ID-015   Testcase:Fault memory clear Default session(14 FFFFFF) All group,0x14,0xFFFFFF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-062 , PreCondition: PC_ID-015  Testcase:Fault memory clear Default session(14 8000FF) Body group,0x14,0x8000FF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-063 , PreCondition: PC_ID-015  Testcase:Conditions not correct(invalid range)(14 FFEEEE) ,0x14,0xFFEEEE,03 7F 14 22 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-064 , PreCondition: PC_ID-015  Testcase:Request out of range(Empty Group of DTC))(14),0x14,  ,03 7F 14 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-065 , PreCondition: PC_ID-015   Testcase:Request out of range(Empty Group of DTC))(14),0x14,0xFFFFFFFFFF,03 7F 14 13 AA AA AA AA,  ,Physical,Hex,	,
+PC_ID-016 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-066 , PreCondition: PC_ID-016  Testcase:reportRead DTCByStatusMask (19 02 08) in past,0x19,0x02 ,03 59 02 08 AA AA AA AA,  ,Physical,Hex,0x08,
+TC_ID-067 , PreCondition: PC_ID-016   Testcase:reportRead DTCByStatusMask (19 02 01) in Active,0x19,0x02 ,03 59 02 01 AA AA AA AA,  ,Physical,Hex,0x01,
+TC_ID-068 , PreCondition: PC_ID-016   Testcase:reportNumberofDTCByStatusMask(19 01 08) ,0x19,0x01 ,06 59 01 08 00 00 00 AA,  ,Physical,Hex,0x08,
+TC_ID-069 , PreCondition: PC_ID-016   Testcase:reportNumberofDTCByStatusMask(19 01 01) ,0x19,0x01 ,06 59 01 01 00 00 00 AA,  ,Physical,Hex,0x01,
+TC_ID-070 , PreCondition: PC_ID-016  Testcase:Report Supported DTC(19 0A 01) ,0x19,0x0A,06 59 0A 09 00 00 00 AA,Hex,,01
+PC_ID-017 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,
+TC_ID-072 , PreCondition: PC_ID-017  Testcase:Request Out of Range,0x22,0xF18F,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,
+TC_ID-075 , PreCondition: PC_ID-017  Testcase:Request Out of Range,0x22,0xF1AF,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,
+TC_ID-079 , PreCondition: PC_ID-017  Testcase:Request Out of Range,0x22,0xF1EE,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,
+PC_ID-003 , Start Programming session,0x10,0x02,06 50 02 00 32 01 F4 AA,  ,Physical,Hex,  ,
+TC_ID-080 , PreCondition: PC_ID-003  Testcase:Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,
+TC_ID-081 , PreCondition: PC_ID-003  Testcase:Start Extended session,0x10,0x03,03 7F 10 7E AA AA AA AA,  ,Physical,Hex,  ,
+TC_ID-082 , PreCondition: PC_ID-003  Testcase:Hard reset,0x11,0x01,02 51 01 AA AA AA AA AA,  ,Physical,Hex,  ,
+TC_ID-083 , PreCondition: PC_ID-003  Testcase:Soft reset,0x11,0x03,02 51 02 AA AA AA AA AA,  ,Physical,Hex,  ,
+PC_ID-018 , Start Programming session,0x10,0x02,06 50 02 00 32 01 F4 AA,  ,Physical,Hex,  ,
+TC_ID-084 , PreCondition: PC_ID-018  Testcase:Disable Rx and Tx(28 00 01) normal communication message,0x28,0x00 ,02 68 00 AA AA AA AA AA,  ,Functional,Hex,	,0x01
+TC_ID-085 , PreCondition: PC_ID-018  Testcase:Disable Rx and Tx(28 00 02) Network management communication message,0x28,0x00 ,02 68 00 AA AA AA AA AA,  ,Functional,Hex,	,0x02
+TC_ID-086 , PreCondition: PC_ID-018  Testcase:Disable Rx and Tx(28 00 03) network management communication message and norml communication message,0x28,0x00 ,02 68 00 AA AA AA AA AA,  ,Functional,Hex,	,0x03
+TC_ID-087 , PreCondition: PC_ID-018  Testcase:EnableRxAndDisableTx Extended session(28 01 01) normal communication message,0x28,0x01 ,02 68 01 AA AA AA AA AA,  ,Functional,Hex,	,0x01
+TC_ID-088 , PreCondition: PC_ID-018  Testcase:EnableRxAndDisableTx Extended session(28 01 02) Network management communication message,0x28,0x01 ,02 68 01 AA AA AA AA AA,  ,Functional,Hex,	,0x02
+TC_ID-089 , PreCondition: PC_ID-018  Testcase:EnableRxAndDisableTx Extended session(28 01 03) network management communication message and norml communication message,0x28,0x01,02 68 01 AA AA AA AA AA,  ,Functional,Hex,	,0x03
+TC_ID-090 , PreCondition: PC_ID-018  Testcase:DisableRxAndEnableTx Extended session(28 02 01) normal communication message,0x28,0x02 ,02 68 02 AA AA AA AA AA,  ,Functional,Hex,	,0x01
+TC_ID-091 , PreCondition: PC_ID-018  Testcase:DisableRxAndEnableTx Extended session(28 02 02) network management communication message,0x28,0x02 ,02 68 02 AA AA AA AA AA,  ,Functional,Hex,	,0x02
+TC_ID-092 , PreCondition: PC_ID-018   Testcase:DisableRxAndEnableTx Extended session(28 02 03) network management communication message and norml communication message,0x28,0x02 ,02 68 02 AA AA AA AA AA,  ,Functional,Hex,	,0x03
+TC_ID-093 , PreCondition: PC_ID-018   Testcase:DisableRxAndDisableTx Extended session(28 03 01) normal communication message,0x28,0x03 ,02 68 03 AA AA AA AA AA,  ,Functional,Hex,	,0x01
+TC_ID-094 , PreCondition: PC_ID-018   Testcase:DisableRxAndDisableTx Extended session(28 03 02) network management communication message,0x28,0x03 ,02 68 03 AA AA AA AA AA,  ,Functional,Hex,	,0x02
+TC_ID-095 , PreCondition: PC_ID-018  Testcase:DisableRxAndDisableTx Extended session(28 03 03) network management communication message and norml communication message,0x28,0x03 ,02 68 03 AA AA AA AA AA,  ,Functional,Hex,	,0x03
