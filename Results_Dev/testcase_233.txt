@@ -50,3 +50,50 @@ TC_ID-209 , PreCondition: PC_ID-025  Testcase:IOC_ReclineFWD_OUT START,0x2F,0xF0
 TC_ID-210 , PreCondition: PC_ID-025  Testcase:IOC_ReclineFWD_OUT STOP,0x2F,0xF020,08 6F  00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
 TC_ID-211 , PreCondition: PC_ID-025  Testcase:3RD RH SEAT Heat Mode to the High START,0x2F,0xF021,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x03
 TC_ID-212 , PreCondition: PC_ID-025  Testcase:3RD RH SEAT Heat Mode to the High STOP,0x2F,0xF021,08 6F 03 00 32 01 F4 AA,,Physical,Hex,  ,  ,0x00
+
+
+
+
+
+
+
+
+
+
+
+
+
+2025-08-20 17:31:27,436 [INFO] Running Test Case: TC_ID-135
+2025-08-20 17:31:27,437 [DEBUG] Starting CanStack
+2025-08-20 17:31:27,448 [DEBUG] Main thread has started
+2025-08-20 17:31:27,452 [DEBUG] Relay thread has started
+2025-08-20 17:31:27,463 [INFO] Connection opened
+2025-08-20 17:31:27,466 [INFO] Switched to physical mode for TC: TC_ID-135 Step: PreCondition: PC_ID-013  Testcase:DTC setting ON  Pre-condition programming(85 01)
+2025-08-20 17:31:27,476 [INFO] TC_ID-135 - PreCondition: PC_ID-013  Testcase:DTC setting ON  Pre-condition programming(85 01): SID=0x85, Sub=0x01, Expected=[2, 197, 1, 170, 170, 170, 170, 170]
+2025-08-20 17:31:27,478 [ERROR] TC_ID-135 - Invalid hex in subfunction: non-hexadecimal number found in fromhex() arg at position 1
+2025-08-20 17:31:27,488 [DEBUG] Stopping CanStack
+2025-08-20 17:31:27,491 [DEBUG] Main thread is exiting
+2025-08-20 17:31:27,514 [DEBUG] CanStack Stopped
+2025-08-20 17:31:27,520 [INFO] Connection closed
+
+
+2025-08-20 17:31:27,521 [INFO] Running Test Case: TC_ID-136
+2025-08-20 17:31:27,522 [DEBUG] Starting CanStack
+2025-08-20 17:31:27,535 [DEBUG] Main thread has started
+2025-08-20 17:31:27,540 [DEBUG] Relay thread has started
+2025-08-20 17:31:27,548 [INFO] Connection opened
+2025-08-20 17:31:27,549 [INFO] Switched to physical mode for TC: TC_ID-136 Step: PreCondition: PC_ID-013  Testcase:DTC setting OFF Pre-condition programming(85 02)
+2025-08-20 17:31:27,549 [INFO] TC_ID-136 - PreCondition: PC_ID-013  Testcase:DTC setting OFF Pre-condition programming(85 02): SID=0x85, Sub=0x02, Expected=[2, 197, 2, 170, 170, 170, 170, 170]
+2025-08-20 17:31:27,550 [ERROR] TC_ID-136 - Invalid hex in subfunction: non-hexadecimal number found in fromhex() arg at position 1
+2025-08-20 17:31:27,551 [DEBUG] Stopping CanStack
+2025-08-20 17:31:27,553 [DEBUG] Main thread is exiting
+2025-08-20 17:31:27,600 [DEBUG] CanStack Stopped
+2025-08-20 17:31:27,601 [INFO] Connection closed
+2025-08-20 17:31:28,180 [ERROR] [CANLogger] Error during stop: I/O operation on closed file.
+2025-08-20 17:31:29,692 [INFO] ----------------------------------Log Generated!----------------------------------
+Log file found: /home/mobase/Service_20_08_25/Raspberry_Pi_Tool/output/can_logs/CANLog_Testcase_20250820_173115.asc
+✅ UDS HTML Report generated at:
+/home/mobase/Service_20_08_25/Raspberry_Pi_Tool/output/html_reports/UDS_Report_20250820_173131.html
+
+2025-08-20 17:31:32,016 [INFO] ----------------------------------Report Generated----------------------------------
+2025-08-20 17:31:34,023 [INFO] ----------------------------------Done-----------------------------------------------
