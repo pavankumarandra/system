@@ -1,0 +1,18 @@
+#TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing, Format, Status_Mask, Communication_Type
+ECU_INFO-1 , S/W Version,0x22,0xF1DD,10 0B 62 F1 DD 30 31 2E 30 30 2E 30 31 AA AA,  ,Physical,Ascii,	,
+ECU_INFO-2 , B-CAN Version,0x22,0xF100,06 62 F1 00 25 02 01 AA,  ,Physical,Ascii,	,
+ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,07 62 F1 8B 00 00 00 00,  ,Physical,Ascii,	,
+ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,10 23 62 F1 8C 30 30 30 30 30 30 30 30 33 31 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Ascii,	,
+ECU_INFO-5 , H/W Version,0x22,0xF193,10 08 62 F1 93 30 31 2E 30 30 AA AA AA AA AA,  ,Physical,Ascii,	,
+PC_ID-001 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-001 , PreCondition: PC_ID-001 Testcase:Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-002 , PreCondition: PC_ID-001 Testcase:Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,	,
+TC_ID-003 , PreCondition: PC_ID-001 Testcase:Sub function not supported(10 FF),0x10,0xFF,03 7F 10 12 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-004 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub function)(10),0x10,  ,03 7F 10 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-005 , PreCondition: PC_ID-001 Testcase:Incorrect message length(incorrect sub function),0x10,0101 ,03 7F 10 13 AA AA AA AA,,Physical, Hex,,
+TC_ID-006 , PreCondition: PC_ID-001 Testcase:Hard reset,0x11,0x01,02 51 01 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-007 , PreCondition: PC_ID-001 Testcase:Soft reset,0x11,0x03,02 51 03 AA AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-008 , PreCondition: PC_ID-001 Testcase:Sub function not supported(out ofrange)(11 08) ,0x11,0x08,03 7F 11 12 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-009 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub function)(11),0x11,  ,03 7F 11 13 AA AA AA AA,  ,Physical,Hex,	,
+TC_ID-010 , PreCondition: PC_ID-001 Testcase:Incorrect message length(No sub function)(11 01 01),0x11,0x01 0x01,03 7F 11 13 AA AA AA AA,  ,Physical,Hex,	,
+
