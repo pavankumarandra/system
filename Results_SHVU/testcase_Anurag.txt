@@ -20,7 +20,8 @@ TC_ID-009 , PreCondition: PC_ID-001  Testcase:Subfunction not supported(No Mask)
 TC_ID-010 , PreCondition: PC_ID-001  Testcase:Subfunction not supported(19 0E),0x19,0x0E,03 7F 19 12 AA AA AA AA,  ,Physical,Hex,0x08,  ,  
 TC_ID-011 , PreCondition: PC_ID-001  Testcase:Subfunction not supported(properMask improper record with 0xFF)(19 FF),0x19,0xFF ,03 7F 19 12 AA AA AA AA,  ,Physical,Hex,0x08,  ,  
 PC_ID-002 , Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
-TC_ID-012 , PreCondition: PC_ID-002  Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,10 2B 62 F1 EF 07 06 0B 52 31 30 20 53 50 33 2F 31 2F 30 0C 52 31 35 35 20 53 50 33 2F 31 2F 30 0C 52 31 35 36 20 53 50 33 2F 31 2F 30   ,  ,Physical,Hex,  ,  ,  
+TC_ID-012 , PreCondition: PC_ID-002  Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,10 2B 62 F1 EF 07 06 52 31 30 20 53 50 33
+2F 31 2F 30 0C 52 31 35 35 20 53 50 33 2F 31 2F 30 0C 52 31 35 36 20 53 50 33 2F 31 2F 30 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-013 , PreCondition: PC_ID-002  Testcase:B_CAN_Database_Version_F1_00_Read(Defaultsession),0x22,0xF100,10 07 62 F1 00 30 2E 31 30 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-014 , PreCondition: PC_ID-002  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Defaultsession),0x22,0xF187,10 0D 62 F1 87 38 38 35 34 30 42 4D 30 30 30   ,  ,Physical,Hex,  ,  ,  
 TC_ID-015 , PreCondition: PC_ID-002  Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,07 62 F1 8B 20 25 02 26,  ,Physical,Hex,  ,  ,  
@@ -32,11 +33,12 @@ TC_ID-020 , PreCondition: PC_ID-002  Testcase:SystemSupplierECUSoftwareVersionNu
 TC_ID-021 , PreCondition: PC_ID-002  Testcase:Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Defaultsession),0x22,0xF1A0,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-022 , PreCondition: PC_ID-002  Testcase:ECU_Supplier_Code_F1_A1_Read(Defaultsession),0x22,0xF1A1,07 62 F1 A1 54 45 4C 45,  ,Physical,Hex,  ,  ,  
 TC_ID-023 , PreCondition: PC_ID-002  Testcase:ECU_Software_UNIT_number_F1_B0_Read(Defaultsession),0x22,0xF1B0,04 62 F1 B0 01 AA AA AA,  ,Physical,Hex,  ,  ,  
-TC_ID-024 , PreCondition: PC_ID-002  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,10 08 62 F1 B1 32 35 34 31 30,  ,Physical,Hex,  ,  ,  
+TC_ID-024 , PreCondition: PC_ID-002  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Defaultsession),0x22,0xF1B1,10 08 62 F1 B1 32 35 34 31 30 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-025 , PreCondition: PC_ID-002  Testcase:S_W_Version_Dataidentifier_F1_DD_Read(Defaultsession),0x22,0xF1DD,10 0A 62 F1 DD 32 35 34 31 30 30 30 AA AA AA,  ,Physical,Hex,  ,  ,  
-TC_ID-026 , PreCondition: PC_ID-002  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,10 0E 62 F1 97 53 48 56 55 5F 46 52 20 20 20 20,  ,Physical,Hex,  ,  ,  
+TC_ID-026 , PreCondition: PC_ID-002  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Defaultsession),0x22,0xF197,10 0E 62 F1 97 53 48 56 55 5F 46 52 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 PC_ID-003 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
-TC_ID-027 , PreCondition: PC_ID-003  Testcase:RX_SWIN_F1_EF_Read(Extended session),0x22,0xF1EF,10 2B 62 F1 EF 07 06 0B 52 31 30 20 53 50 33 2F 31 2F 30 0C 52 31 35 35 20 53 50 33 2F 31 2F 30 0C 52 31 35 36 20 53 50 33 2F 31 2F 30   ,  ,Physical,Hex,  ,  ,  
+TC_ID-027 , PreCondition: PC_ID-003  Testcase:RX_SWIN_F1_EF_Read(Extended session),0x22,0xF1EF,10 2B 62 F1 EF 07 06 52 31 30 20 53 50 33
+2F 31 2F 30 0C 52 31 35 35 20 53 50 33 2F 31 2F 30 0C 52 31 35 36 20 53 50 33 2F 31 2F 30 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-028 , PreCondition: PC_ID-003  Testcase:B_CAN_Database_Version_F1_00_Read(Extendedsession),0x22,0xF100,10 07 62 F1 00 30 2E 31 30,  ,Physical,Hex,  ,  ,  
 TC_ID-029 , PreCondition: PC_ID-003  Testcase:Vehicle_Manufacturer_Spare_Part_Number_F1_87_Read(Extendedsession),0x22,0xF187,10 0D  62 F1 87 38 38 35 34 30 42 4D 30 30 30 ,  ,Physical,Hex,  ,  ,  
 TC_ID-030 , PreCondition: PC_ID-003  Testcase:Manufacturing_F1_8B_Read(Extendedsession),0x22,0xF18B,07 62 F1 8B 20 25 02 26 ,  ,Physical,Hex,  ,  ,  
@@ -48,9 +50,9 @@ TC_ID-035 , PreCondition: PC_ID-003  Testcase:SystemSupplierECUSoftwareVersionNu
 TC_ID-036 , PreCondition: PC_ID-003  Testcase:Software_Version_for_HKMC_Vehicle_Manufacture_F1_A0_Read(Extendedsession),0x22,0xF1A0,03 7F 22 31 AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-037 , PreCondition: PC_ID-003  Testcase:ECU_Supplier_Code_F1_A1_Read(Extendedsession),0x22,0xF1A1,07 62 F1 A1 54 45 4C 45 ,  ,Physical,Hex,  ,  ,  
 TC_ID-038 , PreCondition: PC_ID-003  Testcase:ECU_Software_UNIT_number_F1_B0_Read(Extendedsession),0x22,0xF1B0,04 62 F1 B0 01 AA AA AA,  ,Physical,Hex,  ,  ,  
-TC_ID-039 , PreCondition: PC_ID-003  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Extendedsession),0x22,0xF1B1,10 08 62 F1 B1 32 35 34 31 30,  ,Physical,Hex,  ,  ,  
+TC_ID-039 , PreCondition: PC_ID-003  Testcase:ECU_Software_UNIT1_Version_F1_B1_Read(Extendedsession),0x22,0xF1B1,10 08 62 F1 B1 32 35 34 31 30 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-040 , PreCondition: PC_ID-003  Testcase:S_W_Version_Dataidentifier_F1_DD_Read(Extendedsession),0x22,0xF1DD,10 0A 62 F1 DD 32 35 34 31 30 30 30 AA AA AA,  ,Physical,Hex,  ,  ,  
-TC_ID-041 , PreCondition: PC_ID-003  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Extendedsession),0x22,0xF197,10 0E 62 F1 97 53 48 56 55 5F 46 52 20 20 20 20,  ,Physical,Hex,  ,  ,  
+TC_ID-041 , PreCondition: PC_ID-003  Testcase:SystemNameOrEngineTypeDataIdentifier_Read(Extendedsession),0x22,0xF197,10 0E 62 F1 97 53 48 56 55 5F 46 52 20 20 20 20 AA AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 PC_ID-004 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-042 , PreCondition: PC_ID-004  Testcase:Supported check DID,0x2F,0xF010,10 08 6F F0 10 02 00 00 54 00,  ,Physical,Hex,  ,  ,0x02
 TC_ID-043 , PreCondition: PC_ID-004  Testcase:FRONT SEAT Vent Mode to the High START,0x2F,0xF012,10 04 6F F0 12 03 AA AA AA,  ,Physical,Hex,  ,  ,0x03
