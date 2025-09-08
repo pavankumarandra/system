@@ -4,6 +4,7 @@ import datetime
 from collections import defaultdict
 from html import escape
 
+DESCRIPTION_MAP = {}
 ALLOWED_IDS={"7A6","7AE"}
 
 def load_description_map(txt_file_path):
@@ -33,15 +34,9 @@ def load_description_map(txt_file_path):
 
 
 def parse_data_bytes(line):
-    try:
-        parts = line.strip().split()
-        # Find the first occurrence of 8-byte payload: starts after the second '8'
-        index = [i for i, x in enumerate(parts) if x == '8']
-        if len(index) >= 2:
-            start = index[1] + 1
-            return parts[start:start+8]
-    except:
-        pass
+    match = re.search(r'd\s+\d+\s+((?:[0-9A-Fa-f]{2}(?:\s+|$))+)', line)
+    if match:
+        return match.group(1).strip().split()
     return []
 
 
@@ -175,23 +170,17 @@ def get_status(actual_data, expected_response_data):
 
 def parse_line(line):
     line = line.strip()
-    if not line or "CANFD" not in line:
+    if not line or " d " not in line:
         return None
-
     parts = line.split()
     try:
         timestamp = float(parts[0])
     except:
         return None
-
-    direction = parts[3]
-    if direction not in ("Tx", "Rx"):
-        direction = "Tx" if "Tx" in line else "Rx" if "Rx" in line else direction
-
     return {
         "timestamp": timestamp,
-        "can_id": parts[4].upper(),
-        "direction": direction,
+        "can_id": parts[2].upper(),
+        "direction": parts[3],
         "data_bytes": parse_data_bytes(line),
         "raw": line
     }
@@ -210,13 +199,10 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
     response_buffer = []
     total_resp_len = 0
     collected_len = 0
+    skip_next_fc = False
     pending_flag = False
 
     start_ts, end_ts = None, None
-    skip_next_fc = False
-    pending_flag = False
-    rx_multi_response_pending = False
-    rx_multi_response_first = None
     base_datetime = None
 
     allowed_tx_ids = set(f"{id:X}" for id in allowed_tx_ids)
@@ -225,8 +211,7 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
     with open(asc_file_path, "r", encoding="utf-8", errors="ignore") as f:
         lines = f.readlines()
 
-    # Extract base datetime from "Begin Triggerblock ..."
-    for line in lines:
+    for i, line in enumerate(lines):
         if line.startswith("Begin Triggerblock"):
             try:
                 date_str = line.strip().replace("Begin Triggerblock ", "")
@@ -240,38 +225,28 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
         if not line or not re.match(r"^\d+\.\d+", line):
             continue
 
-        msg = parse_line(line)
-        if not msg:
-            print(f"[❌] Failed to parse line:\n{line}")
-            continue  # Skip to the next line
-
-        #print(f"[DEBUG] Parsed Msg → ID: {msg['can_id']} Dir: {msg['direction']} Data: {msg['data_bytes']}")
-
-        if not msg:
-            #print(f"❌ Failed to parse line: {line}")
-            continue
-
-        if msg["can_id"] not in ALLOWED_IDS:
+        msg = parse_line(line)  # ✅ This was incorrectly indented before
+        if not msg or msg["can_id"] not in ALLOWED_IDS:
             continue
 
         can_id = msg["can_id"]
         direction = msg["direction"]
         data = msg["data_bytes"]
 
-        if not data:
-            #print(f"⚠️ No data in line: {line}")
-            continue
+        # 🟦 Tx: Handle Request
+        if direction == "Tx" and can_id in {"7A6"}:
+            pci_type = data[0].upper()
 
-        pci_type = data[0].upper()
-
-        # ▶️ Tx: Handle Request
-        if direction == "Tx" and can_id in {"7A6", "7AE"}:
-            #print(f"✅ Parsed line: ID={can_id}, dir={direction}, data={data}")
-            if pci_type == "10":  # First Frame
+            if pci_type == "10":  # First Frame of Multi-Frame Request
                 assembling_request = True
                 total_req_len = int(data[1], 16)
                 request_buffer = data[2:]
                 pending_first_frame = msg
+                skip_next_fc = True
+                continue
+
+            elif skip_next_fc and pci_type == "30":
+                skip_next_fc = False
                 continue
 
             elif assembling_request and pci_type.startswith("2"):  # Consecutive Frame
@@ -291,13 +266,12 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
                             "expected_resp": expected_resp,
                             "status": "Pending"
                         }
-                        #print(f"📦 Multi-frame Request TC={tc_id} matched")
                     assembling_request = False
                     request_buffer = []
                     pending_first_frame = None
                 continue
 
-            else:  # Single Frame
+            else:  # Single-Frame Request
                 desc, tc_id, expected_resp, fmt = get_description(data)
                 if desc and tc_id:
                     current_request = {
@@ -315,38 +289,42 @@ def parse_asc_file(asc_file_path, allowed_tx_ids, allowed_rx_ids):
 
         # ◀️ Rx: Handle Response
         elif direction == "Rx" and can_id == "7AE" and current_request:
+            pci_type = data[0].upper()
 
-            if pci_type == "30":  # Flow control
-                #print("⚙️ Skipping flow control frame")
-                continue
+            if pci_type == "30":
+                continue  # Ignore flow control
 
-            # Skip 0x7F xx 78 (Response Pending)
+            # Handle 0x7F xx 78 pending response
             if len(data) >= 4 and data[1].upper() == "7F" and data[3].upper() == "78":
-                #print("⏳ Skipping pending response (7F xx 78)")
-                continue
+                pending_flag = True
+                continue  # Ignore pending response
 
-            if pci_type == "10":  # First frame of multi-frame response
-                total_resp_len = int(data[1], 16)
-                response_buffer = data[:]
-                collected_len = len(data) - 2
-                awaiting_response = True
-                continue
-
-            elif pci_type.startswith("2") and awaiting_response:
-                response_buffer += data[1:]
-                collected_len += len(data) - 1
-                if collected_len >= total_resp_len:
-                    full_resp = response_buffer
-                    awaiting_response = False
-                else:
-                    continue
+            if pending_flag:
+                pending_flag = False
+                full_resp = data  # Treat next frame as actual response
             else:
-                if awaiting_response:
-                    response_buffer += data[1:]
-                    full_resp = response_buffer
-                    awaiting_response = False
+                if pci_type == "10":  # First frame of multi-frame response
+                    total_resp_len = int(data[1], 16)
+                    response_buffer = data[:]  # include full frame including PCI
+                    collected_len = len(data) - 2  # remove PCI and LEN from payload count
+                    awaiting_response = True
+                    continue
+
+                elif pci_type.startswith("2") and awaiting_response:
+                    response_buffer += data[1:]  # exclude PCI
+                    collected_len += len(data) - 1
+                    if collected_len >= total_resp_len:
+                        full_resp = response_buffer
+                        awaiting_response = False
+                    else:
+                        continue
                 else:
-                    full_resp = data
+                    if awaiting_response:
+                        response_buffer += data[1:]
+                        full_resp = response_buffer
+                        awaiting_response = False
+                    else:
+                        full_resp = data
 
             # ✅ Evaluate response
             status, reason = get_status(full_resp, current_request["expected_resp"])
