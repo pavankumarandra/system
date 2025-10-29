@@ -1,12 +1,11 @@
 #TC_ID/PC_ID , Testcase_Description, Service_ID, SubService_ID, Expected_Response_Data, Write_Data, Addressing, Format, Status_Mask, Communication_Type, controltype
-ECU_INFO-1 , PreCondition: PC_ID-055 Testcase:S_W_Version_Dataidentifier_F1_DD_Read(Defaultsession),0x22,0xF1DD,10 0A 62 F1 DD 41 30 30 30 31 AA AA,  ,Physical,Hex,  ,  ,  
-ECU_INFO-2 , PreCondition: PC_ID-055 Testcase:B_CAN_Database_Version_F1_00_Read(Defaultsession),0x22,0xF100,06 62 F1 00 31 2E 34 00,  ,Physical,Hex,  ,  ,  
-ECU_INFO-3 , PreCondition: PC_ID-055 Testcase:Manufacturing_F1_8B_Read(Defaultsession),0x22,0xF18B,
-07 62 F1 8B 20 25 08 07,  ,Physical,Hex,  ,  ,  
-ECU_INFO-4 , PreCondition: PC_ID-55 Testcase:ECU_Serial_Number_F1_8C_Read(Defaultsession),0x22,0xF18C,
-
-10 0B 62 F1 8C 90 90 90 90 90 90 90 90 ,  ,Physical,Hex,  ,  ,  
-ECU_INFO-5 , PreCondition: PC_ID-055 Testcase:HardwareVersionNumber_F1_93_Read(Defaultsession),0x22,0xF193,07 62 F1 93 42 2E 4F 4F ,  ,Physical,Hex,  ,  ,  
+ECU_INFO-1 , S/W Version,0x22,0xF1DD,10 0A 62 F1 DD 41 30 30 30 31 00 00,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-2 , B-CAN Version,0x22,0xF100,06 62 F1 00 31 2E 34 00,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,
+07 62 F1 8B 20 25 08 07,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,
+10 0B 62 F1 8C 90 90 90 90 90 90 90 90 ,  ,Physical,Ascii,  ,  ,  
+ECU_INFO-5 , H/W Version,0x22,0xF193,07 62 F1 93 42 2E 4F 4F ,  ,Physical,Ascii,  ,  ,  
 PC_ID-055 , Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-409 , PreCondition: PC_ID-055 Testcase:RX_SWIN_F1_EF_Read(Defaultsession),0x22,0xF1EF,
 
