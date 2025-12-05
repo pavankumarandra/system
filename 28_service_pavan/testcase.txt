@@ -89,4 +89,5 @@ TC_ID-220 , PreCondition: PC_ID-028  Testcase:Read DTC  with Programming session
 TC_ID-221 , PreCondition: PC_ID-028  Testcase:Fault memory clear Extended session(14 FFFFFF) ,0x14,0xFFFFFF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-222 , PreCondition: PC_ID-028  Testcase:Conditions not correct(invalid range)(14 8000FF) ,0x14,0x8000FF,01 54 AA AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-223 , PreCondition: PC_ID-028  Testcase:Softreset,0x11,0x03,02 51 03 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
-PC_ID-068 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 00,  ,Physical,Hex,  ,  ,  
+PC_ID-069 , Start Default session,0x10,0x01,06 50 01 00 32 01 F4 00,  ,Physical,Hex,  ,  ,  
+TC_ID-644 , PreCondition: PC_ID-046 Testcase:Dark current mode(10 D1),0x10,0xD1,02 50 D1 AA AA AA AA AA,  ,Physical,Hex,  ,  ,  
