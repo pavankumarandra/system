@@ -5,7 +5,7 @@ ECU_INFO-3 , Manufacturing Date,0x22,0xF18B,07 62 F1 8B 20 25 12 19  ,  ,Physica
 ECU_INFO-4 , ECU_Serial Number,0x22,0xF18C,10 0B 62 F1 8C 30 30 30 30 30 30 30 31 AA AA,  ,Physical,Ascii,  ,  ,  
 ECU_INFO-5 , H/W Version,0x22,0xF193,07 62 F1 93 41 2E 30 30 ,  ,Physical,Ascii,  ,  ,  
 TC_ID-001 , Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
-TC_ID-002 , Start programming session,0x10,0x02,0x50,  ,Physical,Hex,  ,  ,  
+TC_ID-002 , Start programming session,0x10,0x02,06 50 02 00 32 00 C8 00,  ,Physical,Hex,  ,  ,  
 TC_ID-003 , Start Extended session,0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-004 , Sub function not supported(10 FF),0x10,0xFF,03 7F 10 12 AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-005 , Incorrect message length(No sub function)(10),0x10,  ,03 7F 10 13 AA AA AA AA,  ,Physical,Hex,  ,  ,  
