@@ -69,7 +69,7 @@ TC_ID-274 , PreCondition: PC_ID-031  Testcase:Start programming session(10 02),0
 TC_ID-275 , PreCondition: PC_ID-031  Testcase:Start Extended session(10 03),0x10,0x03,03 7F 22 7E AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-276 , PreCondition: PC_ID-031  Testcase:Start programming session(10 02),0x10,0x02,06 50 02 00 32 00 C8 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-277 , PreCondition: PC_ID-031  Testcase:Start default session(10 01),0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
-TC_ID-278 , PreCondition: PC_ID-031  Testcase:Start Extended session(10 03),0x10,0x03, ,  ,Physical,Hex,  ,  ,  
+TC_ID-278 , PreCondition: PC_ID-031  Testcase:Start Extended session(10 03),0x10,0x03,06 50 03 00 32 01 F4 AA ,  ,Physical,Hex,  ,  ,  
 PC_ID-032 , Start default session,0x10,0x01,06 50 01 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
 TC_ID-279 , PreCondition: PC_ID-032  Testcase:Service not supported in Active session(27 11),0x27,0x11,03 7F 27 7F AA AA AA AA,  ,Physical,Hex,  ,  ,  
 TC_ID-280 , PreCondition: PC_ID-032  Testcase:Start Extended session(10 03),0x10,0x03,06 50 03 00 32 01 F4 AA,  ,Physical,Hex,  ,  ,  
