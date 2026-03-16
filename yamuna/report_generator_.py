@@ -192,11 +192,11 @@ def parse_line(line):
         if "CANFD" in line:
             can_id = parts[4].upper()
             direction = parts[3]
-            type = "CANFD"
+            ctype = "CANFD"
 
         if "d" in line:
             can_id = parts[2].upper()
-            type = "CAN"
+            ctype = "CAN"
 
     except:
         return None
@@ -207,7 +207,7 @@ def parse_line(line):
         "timestamp": timestamp,
         "can_id": can_id,
         "direction": direction,
-        "data_bytes": parse_data_bytes(line, type),
+        "data_bytes": parse_data_bytes(line, ctype),
         "raw": line
     }
 
